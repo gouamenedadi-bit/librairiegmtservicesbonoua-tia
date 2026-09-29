@@ -2,9 +2,15 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { AlertCircle, MapPin, Phone, ShieldCheck, Truck, UserRound } from "lucide-react";
 
 import { useCartStore } from "@/lib/cart/store";
 import { formatXOF } from "@/lib/utils/format-xof";
+import { useTranslations } from "@/lib/i18n/locale-provider";
+import { getWhatsAppLink } from "@/lib/whatsapp";
+import { FORM_BUTTON_PRIMARY, FORM_ERROR } from "@/lib/ui/form-styles";
+import { FormCard } from "@/components/ui/form-card";
+import { LabeledField } from "@/components/ui/labeled-field";
 import { submitOrder } from "./actions";
 
 export default function CheckoutPage() {
@@ -13,6 +19,7 @@ export default function CheckoutPage() {
   const lines = useCartStore((state) => state.lines);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const dict = useTranslations();
 
   useEffect(() => {
     if (hasHydrated && lines.length === 0) router.replace("/panier");
@@ -20,13 +27,24 @@ export default function CheckoutPage() {
 
   if (!hasHydrated || lines.length === 0) return null;
 
-  const total = lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
+  // create_order() rejects unpriced items server-side (invalid_or_unpriced_product),
+  // so only the priced lines ever reach submitOrder — the rest are shown as
+  // a separate "we'll contact you" note with a WhatsApp link.
+  const pricedLines = lines.filter((line) => line.price !== null);
+  const pendingLines = lines.filter((line) => line.price === null);
+  const total = pricedLines.reduce((sum, line) => sum + line.price! * line.quantity, 0);
+
+  const pendingWhatsAppLink = getWhatsAppLink(
+    pendingLines.length > 0
+      ? `Bonjour, je voudrais connaître le prix de : ${pendingLines.map((l) => l.name).join(", ")}.`
+      : undefined,
+  );
 
   function handleSubmit(formData: FormData) {
     setError(null);
     startTransition(async () => {
       const result = await submitOrder(
-        lines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
+        pricedLines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
         {
           guestName: formData.get("guestName"),
           guestPhone: formData.get("guestPhone"),
@@ -38,68 +56,89 @@ export default function CheckoutPage() {
     });
   }
 
-  return (
-    <div className="mx-auto max-w-lg px-4 py-10">
-      <h1 className="text-2xl font-bold text-brand-navy">Finaliser la commande</h1>
-
-      <form action={handleSubmit} className="mt-6 space-y-4">
-        <Field label="Nom complet" name="guestName" autoComplete="name" required />
-        <Field
-          label="Téléphone"
-          name="guestPhone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="07 00 00 00 00"
-          required
-        />
-        <Field
-          label="Adresse de livraison / quartier"
-          name="guestAddress"
-          autoComplete="street-address"
-          required
-        />
-
-        <div className="rounded-xl bg-black/5 p-4">
-          <div className="flex items-center justify-between text-sm font-semibold text-brand-navy">
-            <span>Total à payer</span>
-            <span>{formatXOF(total)}</span>
-          </div>
-          <p className="mt-1 text-xs text-black/50">Paiement sécurisé via Wave.</p>
-        </div>
-
-        {error && <p className="text-sm font-medium text-red-600">{error}</p>}
-
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full rounded-full bg-brand-green py-3 text-sm font-bold text-white transition hover:bg-brand-green-dark disabled:opacity-60"
+  const pendingBlock = pendingLines.length > 0 && (
+    <div className="rounded-2xl border border-brand-gold/30 bg-brand-gold/[0.06] p-4">
+      <p className="flex items-center gap-1.5 text-sm font-bold text-brand-navy">
+        <AlertCircle size={15} className="text-brand-gold" />
+        {dict.checkout.pendingTitle}
+      </p>
+      <ul className="mt-2 space-y-0.5 text-sm text-black/60">
+        {pendingLines.map((line) => (
+          <li key={line.productId}>• {line.name}</li>
+        ))}
+      </ul>
+      <p className="mt-2 text-xs text-black/50">{dict.checkout.pendingNote}</p>
+      {pendingWhatsAppLink && (
+        <a
+          href={pendingWhatsAppLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-block rounded-full border border-brand-navy/20 px-5 py-2 text-xs font-bold text-brand-navy transition hover:bg-brand-navy/5"
         >
-          {isPending ? "Redirection vers Wave…" : "Payer avec Wave"}
-        </button>
-      </form>
+          {dict.product.contactUs}
+        </a>
+      )}
     </div>
   );
-}
 
-function Field({
-  label,
-  name,
-  type = "text",
-  ...rest
-}: {
-  label: string;
-  name: string;
-  type?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
+  // Rien à payer : tout le panier est "Prix sur demande". Pas de formulaire
+  // Wave dans ce cas, juste le contact — un montant de 0 FCFA n'a aucun sens.
+  if (pricedLines.length === 0) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-10">
+        <FormCard icon={Truck} title={dict.checkout.title}>
+          <p className="text-sm font-semibold text-brand-navy">{dict.checkout.noPricedTitle}</p>
+          <p className="mt-1 text-sm text-black/60">{dict.checkout.noPricedDesc}</p>
+          <div className="mt-5">{pendingBlock}</div>
+        </FormCard>
+      </div>
+    );
+  }
+
   return (
-    <label className="block">
-      <span className="text-sm font-medium text-brand-navy">{label}</span>
-      <input
-        name={name}
-        type={type}
-        className="mt-1 w-full rounded-lg border border-black/10 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
-        {...rest}
-      />
-    </label>
+    <div className="px-4 py-10">
+      <form action={handleSubmit}>
+        <FormCard icon={Truck} title={dict.checkout.title}>
+          <div className="space-y-5">
+            <LabeledField label={dict.checkout.fullName} icon={UserRound} name="guestName" autoComplete="name" required />
+            <LabeledField
+              label={dict.checkout.phone}
+              icon={Phone}
+              name="guestPhone"
+              type="tel"
+              autoComplete="tel"
+              placeholder="07 00 00 00 00"
+              required
+            />
+            <LabeledField
+              label={dict.checkout.address}
+              icon={MapPin}
+              name="guestAddress"
+              autoComplete="street-address"
+              required
+            />
+
+            <div className="rounded-2xl bg-brand-green/[0.06] p-4">
+              <div className="flex items-center justify-between text-sm font-bold text-brand-navy">
+                <span>{dict.checkout.totalToPay}</span>
+                <span>{formatXOF(total)}</span>
+              </div>
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs text-black/50">
+                <ShieldCheck size={13} className="text-brand-green" />
+                {dict.checkout.securePayment}
+              </p>
+            </div>
+
+            {pendingBlock}
+          </div>
+
+          {error && <p className={`mt-6 ${FORM_ERROR}`}>{error}</p>}
+
+          <button type="submit" disabled={isPending} className={`mt-8 w-full ${FORM_BUTTON_PRIMARY}`}>
+            {isPending ? dict.checkout.submitting : dict.checkout.submit}
+          </button>
+        </FormCard>
+      </form>
+    </div>
   );
 }

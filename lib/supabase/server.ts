@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+import { fetchWithTimeout } from "@/lib/supabase/fetch-with-timeout";
 import type { Database } from "@/types/database.types";
 
 /**
@@ -30,6 +31,7 @@ export async function createClient() {
           }
         },
       },
+      global: { fetch: fetchWithTimeout() },
     },
   );
 }

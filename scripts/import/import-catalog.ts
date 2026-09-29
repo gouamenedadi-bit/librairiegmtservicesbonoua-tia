@@ -7,6 +7,10 @@ import { readCatalogRows, type CatalogRow } from "./read-excel";
 import { IMAGES_ROOT_FOLDER, IMAGE_FOLDER_MAP } from "./image-folder-map";
 import { hashFile, listImageFiles, matchImagesToProducts } from "./match-images";
 
+// Unlike `next dev`, running this file directly via `tsx` does not
+// auto-load `.env.local` — needed here since `--apply` talks to Supabase.
+process.loadEnvFile(".env.local");
+
 const APPLY = process.argv.includes("--apply");
 
 // scripts/import/import-catalog.ts runs from `web/` (see package.json

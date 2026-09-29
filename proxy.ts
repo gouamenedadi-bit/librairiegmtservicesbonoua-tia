@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { fetchWithTimeout } from "@/lib/supabase/fetch-with-timeout";
+
 // Next.js 16 renamed `middleware` to `proxy`; this keeps the Supabase auth
 // session cookie refreshed on every request (required by @supabase/ssr).
 export async function proxy(request: NextRequest) {
@@ -24,10 +26,19 @@ export async function proxy(request: NextRequest) {
           }
         },
       },
+      // Short timeout on purpose: this runs on *every* navigation, so a
+      // Supabase outage (or, during local setup, placeholder credentials)
+      // must never stall every page load site-wide.
+      global: { fetch: fetchWithTimeout(3000) },
     },
   );
 
-  await supabase.auth.getUser();
+  try {
+    await supabase.auth.getUser();
+  } catch {
+    // Refreshing the session is best-effort — if Supabase is unreachable,
+    // let the request through unauthenticated rather than fail the page.
+  }
 
   return response;
 }

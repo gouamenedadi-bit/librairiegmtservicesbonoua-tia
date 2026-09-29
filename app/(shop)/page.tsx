@@ -1,73 +1,81 @@
 import Link from "next/link";
 import { BookOpen, Pencil, ShoppingBag, Smartphone, Truck } from "lucide-react";
 
-import { CATEGORY_MAP } from "@/lib/catalog/category-map";
+import { getCategoryNavGroups } from "@/lib/catalog/queries";
+import { getDictionary } from "@/lib/i18n/dictionary";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { storagePublicUrl } from "@/lib/catalog/storage";
+import { HeroCarousel } from "@/components/home/hero-carousel";
 
-const categories = Array.from(
-  new Map(
-    Object.values(CATEGORY_MAP)
-      .filter((c) => c !== null)
-      .map((c) => [c.slug, c]),
-  ).values(),
-);
-const librairieCategories = categories.filter((c) => c.slug.startsWith("librairie-"));
-const papeterieCategories = categories.filter((c) => c.slug.startsWith("papeterie-"));
+// Real product photos already in the catalog (a novel, a pen, a notebook, an
+// office item) — one per hero slide, standing in for "un livre, un stylo, un
+// roman, un article de fourniture de bureau" — never stock/placeholder images.
+const HERO_IMAGES = [
+  "librairie-parascolaire/1.webp",
+  "papeterie-ecriture/1.webp",
+  "papeterie-cahiers/145.webp",
+  "papeterie-assemblage/45.webp",
+].map(storagePublicUrl);
 
-const STEPS = [
-  {
-    icon: ShoppingBag,
-    title: "1. Parcourez le catalogue",
-    description: "Romans, livres scolaires, littérature religieuse, fournitures de bureau…",
-  },
-  {
-    icon: Smartphone,
-    title: "2. Commandez en ligne",
-    description: "Ajoutez au panier et payez simplement avec Wave.",
-  },
-  {
-    icon: Truck,
-    title: "3. Récupérez à Bonoua",
-    description: "Votre commande vous attend à la librairie GMT Services.",
-  },
-];
+export default async function HomePage() {
+  const [dict, { librairie: librairieCategories, papeterie: papeterieCategories }] = await Promise.all([
+    getLocale().then(getDictionary),
+    getCategoryNavGroups(),
+  ]);
 
-export default function HomePage() {
+  const steps = [
+    { icon: ShoppingBag, title: dict.home.step1Title, description: dict.home.step1Desc },
+    { icon: Smartphone, title: dict.home.step2Title, description: dict.home.step2Desc },
+    { icon: Truck, title: dict.home.step3Title, description: dict.home.step3Desc },
+  ];
+
   return (
     <div>
-      <section className="bg-brand-navy">
+      <HeroCarousel images={HERO_IMAGES}>
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-20 sm:py-28">
-          <span className="rounded-full bg-brand-gold px-4 py-1 text-xs font-bold uppercase tracking-widest text-brand-navy">
-            Bonoua, Côte d&apos;Ivoire
+          <span className="animate-fade-in-up rounded-full bg-brand-gold px-4 py-1 text-xs font-bold uppercase tracking-widest text-brand-navy">
+            {dict.home.badge}
           </span>
-          <h1 className="max-w-2xl text-4xl font-extrabold leading-tight text-white sm:text-5xl">
-            Votre librairie et papeterie, maintenant en ligne.
+          <h1
+            style={{ animationDelay: "80ms" }}
+            className="animate-fade-in-up max-w-2xl text-4xl font-extrabold leading-tight text-white sm:text-5xl"
+          >
+            {dict.home.title}
           </h1>
-          <p className="max-w-xl text-lg text-white/80">
-            TIA Librairie — GMT Services Bonoua propose romans, ouvrages scolaires, littérature
-            religieuse et toutes vos fournitures de bureau, livrés ou à récupérer sur place.
+          <p
+            style={{ animationDelay: "160ms" }}
+            className="animate-fade-in-up max-w-xl text-lg text-white/80"
+          >
+            {dict.home.subtitle}
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div style={{ animationDelay: "240ms" }} className="animate-fade-in-up flex flex-wrap gap-3">
             <Link
               href="/categorie/librairie-litterature"
               className="rounded-full bg-brand-green px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-green-dark"
             >
-              Découvrir la librairie
+              {dict.home.ctaLibrairie}
             </Link>
             <Link
               href="/categorie/papeterie-bureau"
               className="rounded-full bg-white/10 px-6 py-3 text-sm font-bold text-white ring-1 ring-white/30 transition hover:bg-white/20"
             >
-              Voir la papeterie
+              {dict.home.ctaPapeterie}
             </Link>
           </div>
         </div>
-      </section>
+      </HeroCarousel>
 
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-6 sm:grid-cols-3">
-          {STEPS.map((step) => (
-            <div key={step.title} className="flex gap-4 rounded-2xl border border-black/5 p-5">
-              <step.icon className="shrink-0 text-brand-green" size={28} />
+          {steps.map((step, index) => (
+            <div
+              key={step.title}
+              style={{ animationDelay: `${index * 120}ms` }}
+              className="animate-fade-in-up group flex gap-4 rounded-2xl border-2 border-brand-green/15 bg-brand-gold/15 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-brand-green/40 hover:shadow-lg"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green transition-transform duration-300 group-hover:scale-110">
+                <step.icon size={24} />
+              </span>
               <div>
                 <p className="font-bold text-brand-navy">{step.title}</p>
                 <p className="mt-1 text-sm text-black/60">{step.description}</p>
@@ -78,19 +86,23 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8">
-        <div className="mb-6 flex items-center gap-2">
-          <BookOpen className="text-brand-green" size={22} />
-          <h2 className="text-2xl font-bold text-brand-navy">Librairie</h2>
+        <div className="rounded-3xl bg-white p-6 shadow-xl sm:p-8">
+          <div className="mb-6 flex items-center gap-2">
+            <BookOpen className="text-brand-green" size={22} />
+            <h2 className="text-2xl font-bold text-brand-navy">{dict.home.librairieHeading}</h2>
+          </div>
+          <CategoryGrid items={librairieCategories} />
         </div>
-        <CategoryGrid items={librairieCategories} />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8">
-        <div className="mb-6 flex items-center gap-2">
-          <Pencil className="text-brand-green" size={22} />
-          <h2 className="text-2xl font-bold text-brand-navy">Papeterie</h2>
+        <div className="rounded-3xl bg-white p-6 shadow-xl sm:p-8">
+          <div className="mb-6 flex items-center gap-2">
+            <Pencil className="text-brand-green" size={22} />
+            <h2 className="text-2xl font-bold text-brand-navy">{dict.home.papeterieHeading}</h2>
+          </div>
+          <CategoryGrid items={papeterieCategories} />
         </div>
-        <CategoryGrid items={papeterieCategories} />
       </section>
     </div>
   );
@@ -99,11 +111,12 @@ export default function HomePage() {
 function CategoryGrid({ items }: { items: { name: string; slug: string }[] }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-      {items.map((category) => (
+      {items.map((category, index) => (
         <Link
           key={category.slug}
           href={`/categorie/${category.slug}`}
-          className="rounded-xl border border-black/5 bg-white p-4 text-sm font-semibold text-brand-navy shadow-sm transition hover:border-brand-green hover:text-brand-green"
+          style={{ animationDelay: `${index * 40}ms` }}
+          className="animate-fade-in-up rounded-xl border-2 border-black/5 bg-brand-gold/15 p-4 text-sm font-semibold text-brand-navy shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:border-brand-green hover:text-brand-green hover:shadow-md"
         >
           {category.name}
         </Link>

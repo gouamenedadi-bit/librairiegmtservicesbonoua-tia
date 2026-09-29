@@ -1,31 +1,35 @@
 -- Boutique en ligne TIA Librairie / GMT Services Bonoua
 -- Schema: categories, products, images, profiles, orders, import tooling.
+--
+-- Schema-qualified with `public.` throughout: unqualified names depend on
+-- the executing session's search_path, which isn't guaranteed to include
+-- `public` in every SQL Editor session/role.
 
 create extension if not exists pgcrypto;
 
-create type price_status as enum ('priced', 'on_request');
-create type payment_status as enum ('pending', 'processing', 'succeeded', 'failed', 'cancelled');
-create type fulfillment_status as enum ('received', 'preparing', 'ready', 'delivered', 'cancelled');
-create type profile_role as enum ('customer', 'admin');
-create type image_source as enum ('auto_match', 'manual', 'placeholder');
+create type public.price_status as enum ('priced', 'on_request');
+create type public.payment_status as enum ('pending', 'processing', 'succeeded', 'failed', 'cancelled');
+create type public.fulfillment_status as enum ('received', 'preparing', 'ready', 'delivered', 'cancelled');
+create type public.profile_role as enum ('customer', 'admin');
+create type public.image_source as enum ('auto_match', 'manual', 'placeholder');
 
 -- ---------------------------------------------------------------------------
 -- categories: feuille Excel = catégorie parente, valeur TYPE = sous-catégorie
 -- ---------------------------------------------------------------------------
-create table categories (
+create table public.categories (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
   name text not null,
-  parent_id uuid references categories (id) on delete cascade,
+  parent_id uuid references public.categories (id) on delete cascade,
   created_at timestamptz not null default now()
 );
 
-create index categories_parent_id_idx on categories (parent_id);
+create index categories_parent_id_idx on public.categories (parent_id);
 
 -- ---------------------------------------------------------------------------
 -- products
 -- ---------------------------------------------------------------------------
-create table products (
+create table public.products (
   id uuid primary key default gen_random_uuid(),
 
   -- clé naturelle issue du fichier Excel client, jamais supposée globalement
@@ -39,11 +43,11 @@ create table products (
   slug text not null unique,
   description text,
 
-  category_id uuid references categories (id),
+  category_id uuid references public.categories (id),
 
   -- XOF n'a pas de subdivision décimale utilisée en pratique : entier, jamais numeric(.,2)
   price integer,
-  price_status price_status not null default 'on_request',
+  price_status public.price_status not null default 'on_request',
 
   stock_quantity integer, -- NULL = non suivi, toujours disponible
 
@@ -66,13 +70,14 @@ create table products (
   constraint products_source_unique unique (source_sheet, source_code)
 );
 
-create index products_category_id_idx on products (category_id);
-create index products_search_idx on products using gin (search_vector);
-create index products_is_active_idx on products (is_active);
+create index products_category_id_idx on public.products (category_id);
+create index products_search_idx on public.products using gin (search_vector);
+create index products_is_active_idx on public.products (is_active);
 
-create function set_updated_at()
+create function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   new.updated_at = now();
@@ -81,59 +86,59 @@ end;
 $$;
 
 create trigger products_set_updated_at
-  before update on products
+  before update on public.products
   for each row
-  execute function set_updated_at();
+  execute function public.set_updated_at();
 
 -- ---------------------------------------------------------------------------
 -- product_images
 -- ---------------------------------------------------------------------------
-create table product_images (
+create table public.product_images (
   id uuid primary key default gen_random_uuid(),
-  product_id uuid not null references products (id) on delete cascade,
+  product_id uuid not null references public.products (id) on delete cascade,
   storage_path text not null,
   position integer not null default 0,
   is_primary boolean not null default false,
   content_hash text not null,
   match_confidence numeric,
-  source image_source not null default 'manual',
+  source public.image_source not null default 'manual',
   alt_text text,
   created_at timestamptz not null default now()
 );
 
-create index product_images_product_id_idx on product_images (product_id);
-create unique index product_images_content_hash_idx on product_images (product_id, content_hash);
+create index product_images_product_id_idx on public.product_images (product_id);
+create unique index product_images_content_hash_idx on public.product_images (product_id, content_hash);
 
 -- ---------------------------------------------------------------------------
 -- profiles (1:1 avec auth.users)
 -- ---------------------------------------------------------------------------
-create table profiles (
+create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text,
   phone text,
-  role profile_role not null default 'customer',
+  role public.profile_role not null default 'customer',
   created_at timestamptz not null default now()
 );
 
 -- ---------------------------------------------------------------------------
 -- orders / order_items
 -- ---------------------------------------------------------------------------
-create sequence order_number_seq;
+create sequence public.order_number_seq;
 
-create table orders (
+create table public.orders (
   id uuid primary key default gen_random_uuid(),
   order_number text not null unique default (
-    'CMD-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('order_number_seq')::text, 6, '0')
+    'CMD-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('public.order_number_seq')::text, 6, '0')
   ),
 
-  customer_id uuid references profiles (id),
+  customer_id uuid references public.profiles (id),
   guest_name text not null,
   guest_phone text not null,
   guest_address text not null,
 
   payment_method text not null default 'wave',
-  payment_status payment_status not null default 'pending',
-  fulfillment_status fulfillment_status not null default 'received',
+  payment_status public.payment_status not null default 'pending',
+  fulfillment_status public.fulfillment_status not null default 'received',
 
   wave_checkout_session_id text unique,
   wave_transaction_id text,
@@ -145,13 +150,13 @@ create table orders (
   created_at timestamptz not null default now()
 );
 
-create index orders_customer_id_idx on orders (customer_id);
-create index orders_payment_status_idx on orders (payment_status);
+create index orders_customer_id_idx on public.orders (customer_id);
+create index orders_payment_status_idx on public.orders (payment_status);
 
-create table order_items (
+create table public.order_items (
   id uuid primary key default gen_random_uuid(),
-  order_id uuid not null references orders (id) on delete cascade,
-  product_id uuid references products (id) on delete set null,
+  order_id uuid not null references public.orders (id) on delete cascade,
+  product_id uuid references public.products (id) on delete set null,
   sku_snapshot text not null,
   name_snapshot text not null,
   unit_price_snapshot integer not null,
@@ -159,12 +164,12 @@ create table order_items (
   subtotal integer not null
 );
 
-create index order_items_order_id_idx on order_items (order_id);
+create index order_items_order_id_idx on public.order_items (order_id);
 
 -- ---------------------------------------------------------------------------
 -- outillage import / paiement
 -- ---------------------------------------------------------------------------
-create table import_runs (
+create table public.import_runs (
   id uuid primary key default gen_random_uuid(),
   started_at timestamptz not null default now(),
   finished_at timestamptz,
@@ -178,7 +183,7 @@ create table import_runs (
   notes text
 );
 
-create table processed_webhook_events (
+create table public.processed_webhook_events (
   event_id text primary key,
   received_at timestamptz not null default now()
 );

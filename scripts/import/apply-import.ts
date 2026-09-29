@@ -1,8 +1,21 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { createAdminClient } from "../../lib/supabase/admin";
+import { createClient } from "@supabase/supabase-js";
+
 import { CATEGORY_MAP } from "../../lib/catalog/category-map";
+import type { Database } from "../../types/database.types";
+
+// Not `lib/supabase/admin.ts`: that module imports `server-only`, which
+// throws unconditionally outside a Next.js build (this script runs under
+// plain `tsx`) — the import CLI needs its own unguarded client construction.
+function createAdminClient() {
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+}
 
 type PreparedProduct = {
   sourceSheet: string;
@@ -52,7 +65,10 @@ export async function applyImport({
     const { data, error } = await supabase.rpc("upsert_category", {
       p_slug: category.slug,
       p_name: category.name,
-      p_parent_id: null,
+      // The generated RPC-arg type doesn't mark this nullable (a Supabase
+      // typegen limitation for function scalar params — Postgres itself
+      // accepts null here fine, see upsert_category's plain `uuid` param).
+      p_parent_id: null as unknown as string,
     });
     if (error || !data) throw new Error(`upsert_category(${category.slug}): ${error?.message}`);
     categoryIdBySlug.set(category.slug, data);
@@ -76,8 +92,9 @@ export async function applyImport({
         p_name: product.name,
         p_slug: product.slug,
         p_category_id: categoryId,
-        p_type_raw: product.typeRaw,
-        p_price: product.price,
+        // Same RPC-arg nullability generator gap as p_parent_id above.
+        p_type_raw: product.typeRaw as unknown as string,
+        p_price: product.price as unknown as number,
         p_price_status: product.priceStatus,
       })
       .single();
@@ -87,7 +104,7 @@ export async function applyImport({
       continue;
     }
 
-    productIdBySourceCode.set(`${product.categorySlug}::${product.sourceCode}`, data.id);
+    productIdBySourceCode.set(`${product.categorySlug}::${product.sourceCode}`, data.product_id);
     if (data.was_created) created += 1;
     else updated += 1;
   }

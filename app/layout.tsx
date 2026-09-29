@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { getLocale } from "@/lib/i18n/get-locale";
+import { LocaleProvider } from "@/lib/i18n/locale-provider";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -12,22 +15,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteName = "TIA Librairie — GMT Services Bonoua";
+const siteDescription =
+  "Librairie et papeterie en ligne à Bonoua : romans, littérature scolaire et religieuse, fournitures de bureau et papeterie, livrés près de chez vous.";
+
 export const metadata: Metadata = {
   title: {
-    default: "TIA Librairie — GMT Services Bonoua",
+    default: siteName,
     template: "%s — TIA Librairie",
   },
-  description:
-    "Librairie et papeterie en ligne à Bonoua : romans, littérature scolaire et religieuse, fournitures de bureau et papeterie, livrés près de chez vous.",
+  description: siteDescription,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="fr"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <LocaleProvider initialLocale={locale}>{children}</LocaleProvider>
+      </body>
     </html>
   );
 }

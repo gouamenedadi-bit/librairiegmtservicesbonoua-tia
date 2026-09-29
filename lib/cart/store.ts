@@ -7,7 +7,11 @@ export type CartLine = {
   productId: string;
   name: string;
   slug: string;
-  price: number;
+  // null = product doesn't have a set price yet ("Prix sur demande"). It can
+  // still be added to the cart as an interest signal, but create_order()
+  // rejects unpriced items server-side — see app/(shop)/commande/page.tsx,
+  // which filters these out before ever calling submitOrder().
+  price: number | null;
   imageUrl: string | null;
   quantity: number;
 };

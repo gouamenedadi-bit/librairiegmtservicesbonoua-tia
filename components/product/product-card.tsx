@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { primaryImagePath, storagePublicUrl } from "@/lib/catalog/queries";
+import { primaryImagePath, storagePublicUrl } from "@/lib/catalog/storage";
 import { formatXOF } from "@/lib/utils/format-xof";
+import { getDictionary } from "@/lib/i18n/dictionary";
+import { getLocale } from "@/lib/i18n/get-locale";
 import { AddToCartButton } from "./add-to-cart-button";
+import { StarRating } from "./star-rating";
 
 type ProductCardData = {
   id: string;
@@ -12,20 +15,28 @@ type ProductCardData = {
   price: number | null;
   price_status: "priced" | "on_request";
   product_images?: { storage_path: string; position: number; is_primary: boolean }[] | null;
+  product_reviews?: { rating: number }[] | null;
 };
 
-export function ProductCard({ product }: { product: ProductCardData }) {
+export async function ProductCard({ product }: { product: ProductCardData }) {
+  const dict = getDictionary(await getLocale());
   const imagePath = primaryImagePath(product.product_images);
   const imageUrl = imagePath ? storagePublicUrl(imagePath) : null;
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-black/5 bg-white shadow-sm">
-      <Link href={`/produit/${product.slug}`} className="relative aspect-square bg-black/5">
+    <div className="group flex flex-col overflow-hidden rounded-xl border-2 border-black/5 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-green/30 hover:shadow-lg">
+      <Link href={`/produit/${product.slug}`} className="relative aspect-square overflow-hidden bg-black/5">
         {imageUrl ? (
-          <Image src={imageUrl} alt={product.name} fill className="object-cover" />
+          <Image
+            src={imageUrl}
+            alt={product.name}
+            fill
+            unoptimized
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-xs text-black/30">
-            Photo à venir
+            {dict.product.photoComing}
           </div>
         )}
       </Link>
@@ -37,30 +48,29 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           {product.name}
         </Link>
 
-        {product.price_status === "priced" && product.price !== null ? (
-          <>
-            <p className="text-sm font-bold text-brand-navy">{formatXOF(product.price)}</p>
-            <AddToCartButton
-              productId={product.id}
-              name={product.name}
-              slug={product.slug}
-              price={product.price}
-              imageUrl={imageUrl}
-            />
-          </>
-        ) : (
-          <>
-            <p className="text-sm font-semibold text-brand-gold">Prix sur demande</p>
-            <a
-              href="https://wa.me/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-brand-navy/20 px-5 py-2.5 text-center text-sm font-bold text-brand-navy transition hover:bg-brand-navy/5"
-            >
-              Nous contacter
-            </a>
-          </>
-        )}
+        <StarRating ratings={product.product_reviews} className="justify-center" />
+
+        {/* Même taille (text-sm/14px) que le titre juste au-dessus, pour que
+            le prix ne paraisse pas plus gros que l'article — et en noir
+            foncé (pas jaune) pour rester lisible, prix connu ou non. */}
+        <p className="text-center text-sm font-bold text-brand-navy">
+          {product.price_status === "priced" && product.price !== null
+            ? formatXOF(product.price)
+            : dict.product.priceOnRequest}
+        </p>
+
+        {/* Toujours "Ajouter au panier", même sans prix pour l'instant : la
+            ligne du panier garde alors price=null ("Prix sur demande") et
+            create_order() rejette ces articles côté serveur au paiement —
+            voir app/(shop)/panier et commande, qui filtrent/expliquent ça
+            avant d'arriver à Wave. */}
+        <AddToCartButton
+          productId={product.id}
+          name={product.name}
+          slug={product.slug}
+          price={product.price_status === "priced" ? product.price : null}
+          imageUrl={imageUrl}
+        />
       </div>
     </div>
   );
