@@ -11,16 +11,20 @@ export function ProductRowActions({ id, isActive }: { id: string; isActive: bool
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="flex items-center justify-end gap-2">
-      <label className="mr-2 flex items-center gap-1.5 text-xs text-black/60">
-        <input
-          type="checkbox"
-          defaultChecked={isActive}
-          disabled={isPending}
-          onChange={(e) => startTransition(() => toggleProductActive(id, e.target.checked))}
-          className="h-3.5 w-3.5 rounded border-black/20 text-brand-green focus:ring-brand-green"
-        />
+    <div className="flex items-center justify-end gap-3">
+      <label className="flex items-center gap-2 text-xs font-medium text-black/60">
         Visible
+        <span className="relative inline-flex cursor-pointer items-center">
+          <input
+            type="checkbox"
+            defaultChecked={isActive}
+            disabled={isPending}
+            onChange={(e) => startTransition(() => toggleProductActive(id, e.target.checked))}
+            className="peer sr-only"
+          />
+          <span className="h-5 w-9 rounded-full bg-black/15 transition-colors duration-200 peer-checked:bg-brand-green peer-focus-visible:ring-2 peer-focus-visible:ring-brand-green/40 peer-disabled:opacity-50" />
+          <span className="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 peer-checked:translate-x-4" />
+        </span>
       </label>
       <Link
         href={`/admin/produits/${id}`}

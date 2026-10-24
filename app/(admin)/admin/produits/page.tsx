@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Package, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageOff, Package, Plus } from "lucide-react";
 
 import { getAdminProducts, getCategoriesForSelect } from "@/lib/admin/queries";
 import { primaryImagePath, storagePublicUrl } from "@/lib/catalog/storage";
@@ -83,11 +83,11 @@ export default async function AdminProductsPage({
               products.map((product) => {
                 const imagePath = primaryImagePath(product.product_images);
                 return (
-                  <tr key={product.id} className={TABLE_ROW}>
+                  <tr key={product.id} className={`${TABLE_ROW} even:bg-black/[0.015]`}>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="group relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-black/5">
-                          {imagePath && (
+                        <div className="group relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-black/10 bg-black/5">
+                          {imagePath ? (
                             <Image
                               src={storagePublicUrl(imagePath)}
                               alt=""
@@ -95,6 +95,10 @@ export default async function AdminProductsPage({
                               unoptimized
                               className="object-cover transition-transform duration-300 group-hover:scale-110"
                             />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-black/20">
+                              <ImageOff size={16} />
+                            </div>
                           )}
                         </div>
                         <div>
