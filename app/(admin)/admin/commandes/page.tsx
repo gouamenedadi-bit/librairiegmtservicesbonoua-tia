@@ -14,33 +14,34 @@ export default async function AdminOrdersPage() {
 
   return (
     <div>
-      <div>
+      <div className="sticky top-0 z-10 -mx-4 -mt-4 border-b border-black/5 bg-white px-4 pt-4 pb-5 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6 lg:-mx-8 lg:-mt-8 lg:px-8 lg:pt-8">
         <h1 className="text-2xl font-bold text-brand-navy">Commandes</h1>
         <p className="mt-1 text-sm text-black/60">{orders.length} commande(s) récente(s)</p>
       </div>
 
-      <div className={TABLE_CONTAINER}>
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className={TABLE_HEAD}>
-            <tr>
-              <th className="px-5 py-3.5 font-medium">Commande</th>
-              <th className="px-5 py-3.5 font-medium">Client</th>
-              <th className="px-5 py-3.5 font-medium">Total</th>
-              <th className="px-5 py-3.5 font-medium">Paiement</th>
-              <th className="px-5 py-3.5 font-medium">Statut</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-black/5">
-            {orders.length === 0 ? (
+      {orders.length === 0 ? (
+        <div className="mt-6 flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed border-black/10 bg-white px-5 py-16 text-center shadow-sm">
+          <ShoppingCart size={28} className="text-black/15" />
+          <p className="font-semibold text-brand-navy">Aucune commande pour le moment.</p>
+          <p className="max-w-xs text-sm text-black/50">
+            Les commandes passées sur le site apparaîtront ici dès qu&apos;un client validera un panier.
+          </p>
+        </div>
+      ) : (
+        <div className={TABLE_CONTAINER}>
+          <table className="w-full min-w-[720px] text-left text-sm">
+            <thead className={TABLE_HEAD}>
               <tr>
-                <td colSpan={5} className="px-5 py-14 text-center text-black/40">
-                  <ShoppingCart size={28} className="mx-auto mb-2 text-black/15" />
-                  Aucune commande pour le moment.
-                </td>
+                <th className="px-5 py-3.5 font-medium">Commande</th>
+                <th className="px-5 py-3.5 font-medium">Client</th>
+                <th className="px-5 py-3.5 font-medium">Total</th>
+                <th className="px-5 py-3.5 font-medium">Paiement</th>
+                <th className="px-5 py-3.5 font-medium">Statut</th>
               </tr>
-            ) : (
-              orders.map((order) => (
-                <tr key={order.id} className={TABLE_ROW}>
+            </thead>
+            <tbody className="divide-y divide-black/5">
+              {orders.map((order) => (
+                <tr key={order.id} className={`${TABLE_ROW} even:bg-black/[0.015]`}>
                   <td className="px-5 py-3.5">
                     <Link
                       href={`/admin/commandes/${order.id}`}
@@ -66,11 +67,11 @@ export default async function AdminOrdersPage() {
                     <OrderStatusSelect orderId={order.id} status={order.fulfillment_status} />
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

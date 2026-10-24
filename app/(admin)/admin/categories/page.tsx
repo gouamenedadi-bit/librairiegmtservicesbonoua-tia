@@ -44,7 +44,7 @@ export default async function AdminCategoriesPage() {
               </tr>
             ) : (
               categories.map((category) => (
-                <tr key={category.id} className={TABLE_ROW}>
+                <tr key={category.id} className={`${TABLE_ROW} even:bg-black/[0.015]`}>
                   <td className="px-5 py-3.5 font-semibold text-brand-navy">{category.name}</td>
                   <td className="px-5 py-3.5 font-mono text-xs text-black/40">{category.slug}</td>
                   <td className="px-5 py-3.5">
