@@ -93,7 +93,7 @@ export default async function AdminDashboardPage() {
             Rien à traiter — tout est à jour.
           </div>
         ) : (
-          <div className="mt-3 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm">
+          <div className="mt-3 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-xl">
             {todoItems.map((item, index) => (
               <Link
                 key={item.label}
@@ -129,7 +129,7 @@ export default async function AdminDashboardPage() {
               key={card.label}
               href={card.href}
               style={{ animationDelay: `${index * 60}ms` }}
-              className="group flex animate-fade-in-up flex-col gap-3 rounded-2xl border-2 border-t-4 border-black/5 border-t-brand-green bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+              className="group flex animate-fade-in-up flex-col gap-3 rounded-2xl border-2 border-t-4 border-black/5 border-t-brand-green bg-white p-5 shadow-xl transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green transition-transform duration-200 group-hover:scale-110">
                 <card.icon size={18} />
@@ -150,7 +150,7 @@ export default async function AdminDashboardPage() {
             <Link
               key={link.href}
               href={link.href}
-              className="group flex items-start gap-3 rounded-2xl border border-black/5 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-green hover:shadow-md"
+              className="group flex items-start gap-3 rounded-2xl border border-black/5 bg-white p-5 shadow-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-green hover:shadow-2xl"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-navy text-brand-gold transition-transform duration-200 group-hover:scale-110">
                 <link.icon size={16} />

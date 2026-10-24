@@ -39,7 +39,7 @@ export default async function AdminOrderDetailPage({
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-sm lg:col-span-2">
+        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl lg:col-span-2">
           <h2 className="text-sm font-bold uppercase tracking-wide text-black/40">Articles</h2>
           <div className="mt-3 divide-y divide-black/5">
             {items.map((item) => (
@@ -62,7 +62,7 @@ export default async function AdminOrderDetailPage({
 
         <div
           style={{ animationDelay: "80ms" }}
-          className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-sm"
+          className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl"
         >
           <h2 className="text-sm font-bold uppercase tracking-wide text-black/40">Client</h2>
           <dl className="mt-3 space-y-3 text-sm">

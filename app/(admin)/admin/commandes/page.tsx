@@ -20,7 +20,7 @@ export default async function AdminOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="mt-6 flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed border-black/10 bg-white px-5 py-16 text-center shadow-sm">
+        <div className="mt-6 flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed border-black/10 bg-white px-5 py-16 text-center shadow-xl">
           <ShoppingCart size={28} className="text-black/15" />
           <p className="font-semibold text-brand-navy">Aucune commande pour le moment.</p>
           <p className="max-w-xs text-sm text-black/50">

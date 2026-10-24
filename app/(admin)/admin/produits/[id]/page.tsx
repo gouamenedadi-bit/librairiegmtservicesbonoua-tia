@@ -32,7 +32,7 @@ export default async function EditProductPage({
       <div className="mt-4 grid gap-8 lg:grid-cols-2 lg:items-start">
         <ProductForm categories={categories} product={product} action={updateProduct.bind(null, id)} />
 
-        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-sm sm:p-8">
+        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
               <Images size={20} />
@@ -47,7 +47,7 @@ export default async function EditProductPage({
           </div>
         </div>
 
-        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-sm sm:p-8 lg:col-span-2">
+        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8 lg:col-span-2">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-gold/20 text-brand-navy">
               <Palette size={20} />

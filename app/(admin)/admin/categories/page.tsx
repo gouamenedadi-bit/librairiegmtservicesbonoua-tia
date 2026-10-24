@@ -3,7 +3,7 @@ import { FolderTree, Plus } from "lucide-react";
 
 import { getAdminCategories } from "@/lib/admin/queries";
 import { FORM_BUTTON_PRIMARY } from "@/lib/ui/form-styles";
-import { TABLE_HEAD, TABLE_ROW } from "@/lib/ui/table-styles";
+import { TABLE_CONTAINER, TABLE_HEAD, TABLE_ROW } from "@/lib/ui/table-styles";
 import { CategoryRowActions } from "@/components/admin/category-row-actions";
 
 export default async function AdminCategoriesPage() {
@@ -24,7 +24,7 @@ export default async function AdminCategoriesPage() {
         </div>
       </div>
 
-      <div className="mt-6 animate-fade-in-up overflow-x-auto rounded-3xl border border-black/5 bg-white shadow-xl">
+      <div className={TABLE_CONTAINER}>
         <table className="w-full min-w-[560px] text-left text-sm">
           <thead className={TABLE_HEAD}>
             <tr>

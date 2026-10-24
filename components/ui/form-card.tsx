@@ -17,7 +17,7 @@ export function FormCard({
 }) {
   return (
     <div
-      className={`mx-auto w-full ${maxWidth} animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-sm sm:p-8`}
+      className={`mx-auto w-full ${maxWidth} animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8`}
     >
       <div className="flex items-center gap-3">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
