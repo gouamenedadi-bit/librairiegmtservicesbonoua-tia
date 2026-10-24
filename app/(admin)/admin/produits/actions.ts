@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils/slugify";
 import { productFormSchema } from "@/lib/validations/product";
+import { requireAdmin } from "@/lib/admin/require-admin";
 
 function parseProductForm(formData: FormData) {
   const isOnRequest = formData.get("isOnRequest") === "on";
@@ -24,11 +25,14 @@ function parseProductForm(formData: FormData) {
 
 /**
  * Admin product writes go through the normal (anon-key + session) server
- * client, never the service-role client: RLS's `products_admin_write` policy
- * (is_admin()) is the actual gate here, so this also proves that policy
- * really works end-to-end rather than only trusting app-level checks.
+ * client, never the service-role client — RLS's `products_admin_write`
+ * policy (is_admin()) still backs every write here. The `requireAdmin()`
+ * call in each function below is a redundant, explicit app-level check on
+ * top of that (defense in depth), not a replacement for it.
  */
 export async function createProduct(formData: FormData): Promise<{ error: string } | { id: string }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const parsed = parseProductForm(formData);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
 
@@ -68,6 +72,8 @@ export async function updateProduct(
   id: string,
   formData: FormData,
 ): Promise<{ error: string } | { id: string }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const parsed = parseProductForm(formData);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
 
@@ -95,6 +101,8 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(id: string): Promise<{ error: string } | { ok: true }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const supabase = await createClient();
 
   const { data: images } = await supabase
@@ -114,6 +122,8 @@ export async function deleteProduct(id: string): Promise<{ error: string } | { o
 }
 
 export async function toggleProductActive(id: string, isActive: boolean) {
+  if (!(await requireAdmin())) return;
+
   const supabase = await createClient();
   await supabase.from("products").update({ is_active: isActive }).eq("id", id);
   revalidatePath("/admin/produits");
@@ -126,6 +136,7 @@ export async function toggleProductActive(id: string, isActive: boolean) {
  * so the shop owner finds and links the other product by name themselves.
  */
 export async function searchProductsForLinking(query: string, excludeId: string) {
+  if (!(await requireAdmin())) return [];
   if (!query.trim()) return [];
 
   const supabase = await createClient();
@@ -143,6 +154,8 @@ export async function linkProductVariant(
   productId: string,
   otherProductId: string,
 ): Promise<{ error: string } | { ok: true }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const supabase = await createClient();
 
   const { data: rows } = await supabase
@@ -170,6 +183,8 @@ export async function linkProductVariant(
 export async function unlinkProductVariant(
   productId: string,
 ): Promise<{ error: string } | { ok: true }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const supabase = await createClient();
   const { error } = await supabase
     .from("products")

@@ -4,25 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-/**
- * Re-checks the caller is really an admin using their own session, never
- * trusting that only admins can reach this action just because the page
- * that calls it is gated — a Server Action is its own callable endpoint,
- * same defense-in-depth pattern as every other admin write in this app.
- */
-async function requireAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-  if (profile?.role !== "admin") return null;
-
-  return user;
-}
+import { requireAdmin } from "@/lib/admin/require-admin";
 
 export async function createAdminAccount(
   formData: FormData,

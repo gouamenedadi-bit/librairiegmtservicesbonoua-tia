@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 import { categoryFormSchema } from "@/lib/validations/category";
+import { requireAdmin } from "@/lib/admin/require-admin";
 
 function parseCategoryForm(formData: FormData) {
   return categoryFormSchema.safeParse({
@@ -13,6 +14,8 @@ function parseCategoryForm(formData: FormData) {
 }
 
 export async function createCategory(formData: FormData): Promise<{ error: string } | { id: string }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const parsed = parseCategoryForm(formData);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
 
@@ -37,6 +40,8 @@ export async function updateCategory(
   id: string,
   formData: FormData,
 ): Promise<{ error: string } | { id: string }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const parsed = parseCategoryForm(formData);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
 
@@ -57,6 +62,8 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(id: string): Promise<{ error: string } | { ok: true }> {
+  if (!(await requireAdmin())) return { error: "Non autorisé." };
+
   const supabase = await createClient();
 
   const { count } = await supabase

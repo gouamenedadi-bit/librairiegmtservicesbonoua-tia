@@ -42,10 +42,20 @@ export async function POST(request: Request) {
   }
 
   if (event.type === "checkout.session.completed") {
-    await supabase.rpc("mark_order_paid", {
+    const { error: markPaidError } = await supabase.rpc("mark_order_paid", {
       p_wave_checkout_session_id: event.data.id,
       p_wave_transaction_id: event.data.transaction_id ?? event.data.id,
     });
+
+    if (markPaidError) {
+      // Don't leave this event_id recorded as "processed" if we failed to
+      // act on it — otherwise a transient DB error here would permanently
+      // strand the order at payment_status='pending' despite the charge
+      // having succeeded, since Wave would never redeliver an event we
+      // already told it we handled.
+      await supabase.from("processed_webhook_events").delete().eq("event_id", event.id);
+      return NextResponse.json({ error: "mark_paid_failed" }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ received: true });

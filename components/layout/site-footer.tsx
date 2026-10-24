@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { Phone } from "lucide-react";
 
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { getLocale } from "@/lib/i18n/get-locale";
+import { getWhatsAppDisplayNumber, getWhatsAppLink } from "@/lib/whatsapp";
 
 export async function SiteFooter() {
   const dict = getDictionary(await getLocale());
+  const whatsappDisplayNumber = getWhatsAppDisplayNumber();
+  const whatsappLink = getWhatsAppLink();
 
   return (
     <footer className="mt-auto bg-brand-navy text-white">
@@ -25,6 +29,17 @@ export async function SiteFooter() {
         <div>
           <p className="text-sm font-bold uppercase tracking-wide text-brand-gold">{dict.footer.contact}</p>
           <p className="mt-2 text-sm text-white/70">{dict.footer.address}</p>
+          {whatsappDisplayNumber && whatsappLink && (
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex items-center gap-2 text-sm text-white/70 transition hover:text-white"
+            >
+              <Phone size={14} className="shrink-0 text-brand-green" />
+              {whatsappDisplayNumber}
+            </a>
+          )}
         </div>
       </div>
       <div className="flex flex-col items-center gap-1 border-t border-white/10 py-4 text-center text-xs text-white/50 sm:flex-row sm:justify-center sm:gap-3">

@@ -6,6 +6,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { storagePublicUrl } from "@/lib/catalog/storage";
 import { HeroCarousel } from "@/components/home/hero-carousel";
+import { CategoryIcon } from "@/lib/catalog/category-icons";
 
 // Real product photos already in the catalog (a novel, a pen, a notebook, an
 // office item) — one per hero slide, standing in for "un livre, un stylo, un
@@ -65,50 +66,109 @@ export default async function HomePage() {
         </div>
       </HeroCarousel>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid gap-6 sm:grid-cols-3">
-          {steps.map((step, index) => (
-            <div
-              key={step.title}
-              style={{ animationDelay: `${index * 120}ms` }}
-              className="animate-fade-in-up group flex gap-4 rounded-2xl border-2 border-brand-green/15 bg-brand-gold/15 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-brand-green/40 hover:shadow-lg"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green transition-transform duration-300 group-hover:scale-110">
-                <step.icon size={24} />
-              </span>
-              <div>
-                <p className="font-bold text-brand-navy">{step.title}</p>
-                <p className="mt-1 text-sm text-black/60">{step.description}</p>
+      {/* "Ticket" band — the 3 steps are a real sequence (browse → order →
+          pick up), so numbering earns its place here. One continuous card
+          instead of 3 separate ones, with dashed section dividers, reads
+          like a shop receipt split into its stages — apt for a business
+          whose whole pitch is "order online, collect in person." */}
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:py-16">
+        <p className="animate-fade-in-up text-center text-xs font-bold uppercase tracking-[0.2em] text-brand-green">
+          {dict.home.stepsEyebrow}
+        </p>
+        <div
+          style={{ animationDelay: "60ms" }}
+          className="animate-fade-in-up relative mt-4 overflow-hidden rounded-3xl border-2 border-black/5 bg-white shadow-xl"
+        >
+          <div className="h-1.5 w-full bg-gradient-to-r from-brand-green via-brand-gold to-brand-green" />
+          <div className="grid divide-y-2 divide-dashed divide-black/10 sm:grid-cols-3 sm:divide-x-2 sm:divide-y-0">
+            {steps.map((step, index) => (
+              <div key={step.title} className="group relative flex flex-col gap-3 p-6 sm:p-8">
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute right-4 top-2 select-none text-6xl font-extrabold text-brand-navy/[0.05]"
+                >
+                  0{index + 1}
+                </span>
+                <span className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green transition-transform duration-300 group-hover:scale-110">
+                  <step.icon size={22} />
+                </span>
+                <div className="relative">
+                  <p className="font-bold text-brand-navy">{step.title.replace(/^\d+\.\s*/, "")}</p>
+                  <p className="mt-1 text-sm text-black/60">{step.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8">
-        <div className="rounded-3xl bg-white p-6 shadow-xl sm:p-8">
-          <div className="mb-6 flex items-center gap-2">
-            <BookOpen className="text-brand-green" size={22} />
-            <h2 className="text-2xl font-bold text-brand-navy">{dict.home.librairieHeading}</h2>
-          </div>
-          <CategoryGrid items={librairieCategories} />
-        </div>
+        <CatalogSection
+          icon={BookOpen}
+          heading={dict.home.librairieHeading}
+          subheading={dict.home.librairieSub}
+          items={librairieCategories}
+          accent="green"
+        />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8">
-        <div className="rounded-3xl bg-white p-6 shadow-xl sm:p-8">
-          <div className="mb-6 flex items-center gap-2">
-            <Pencil className="text-brand-green" size={22} />
-            <h2 className="text-2xl font-bold text-brand-navy">{dict.home.papeterieHeading}</h2>
-          </div>
-          <CategoryGrid items={papeterieCategories} />
-        </div>
+        <CatalogSection
+          icon={Pencil}
+          heading={dict.home.papeterieHeading}
+          subheading={dict.home.papeterieSub}
+          items={papeterieCategories}
+          accent="gold"
+        />
       </section>
     </div>
   );
 }
 
-function CategoryGrid({ items }: { items: { name: string; slug: string }[] }) {
+function CatalogSection({
+  icon: Icon,
+  heading,
+  subheading,
+  items,
+  accent,
+}: {
+  icon: typeof BookOpen;
+  heading: string;
+  subheading: string;
+  items: { name: string; slug: string }[];
+  accent: "green" | "gold";
+}) {
+  const accentText = accent === "green" ? "text-brand-green" : "text-brand-gold";
+
+  return (
+    <div className="rounded-3xl bg-white p-6 shadow-xl sm:p-8">
+      <div className="mb-7 flex items-center gap-4">
+        <span
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-navy ${accentText}`}
+        >
+          <Icon size={22} />
+        </span>
+        <div>
+          <h2 className="text-2xl font-bold text-brand-navy">{heading}</h2>
+          <p className="text-sm text-black/50">{subheading}</p>
+        </div>
+      </div>
+      <CategoryGrid items={items} accent={accent} />
+    </div>
+  );
+}
+
+function CategoryGrid({
+  items,
+  accent,
+}: {
+  items: { name: string; slug: string }[];
+  accent: "green" | "gold";
+}) {
+  const iconWrap = accent === "green" ? "bg-brand-green/10 text-brand-green" : "bg-brand-gold/25 text-brand-navy";
+  const topBorder = accent === "green" ? "border-t-brand-green" : "border-t-brand-gold";
+  const hoverBorder = accent === "green" ? "hover:border-brand-green" : "hover:border-brand-gold";
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
       {items.map((category, index) => (
@@ -116,9 +176,14 @@ function CategoryGrid({ items }: { items: { name: string; slug: string }[] }) {
           key={category.slug}
           href={`/categorie/${category.slug}`}
           style={{ animationDelay: `${index * 40}ms` }}
-          className="animate-fade-in-up rounded-xl border-2 border-black/5 bg-brand-gold/15 p-4 text-sm font-semibold text-brand-navy shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:border-brand-green hover:text-brand-green hover:shadow-md"
+          className={`animate-fade-in-up group flex flex-col items-start gap-3 rounded-2xl border-2 border-t-4 border-black/5 ${topBorder} bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${hoverBorder}`}
         >
-          {category.name}
+          <span
+            className={`flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${iconWrap}`}
+          >
+            <CategoryIcon slug={category.slug} size={18} />
+          </span>
+          <span className="text-sm font-semibold text-brand-navy">{category.name}</span>
         </Link>
       ))}
     </div>

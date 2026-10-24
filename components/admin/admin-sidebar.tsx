@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FolderTree, LayoutGrid, LogOut, Menu, Package, ShoppingCart, Users, X } from "lucide-react";
 
@@ -17,6 +18,7 @@ const NAV_LINKS = [
 
 export function AdminSidebar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -66,17 +68,26 @@ export function AdminSidebar() {
           </div>
 
           <nav className="space-y-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white/80 transition-all duration-200 hover:translate-x-1 hover:bg-white/10 hover:text-white"
-              >
-                <link.icon size={16} className="transition-transform duration-200 group-hover:scale-110" />
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive =
+                link.href === "/admin" ? pathname === "/admin" : pathname?.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:translate-x-1 ${
+                    isActive
+                      ? "bg-brand-green text-white"
+                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  <link.icon size={16} className="transition-transform duration-200 group-hover:scale-110" />
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
 

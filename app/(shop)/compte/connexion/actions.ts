@@ -22,5 +22,9 @@ export async function signInCustomer(
 
   if (error) return { error: "invalid_credentials" };
 
-  redirect(redirectTo.startsWith("/") ? redirectTo : "/compte/avis");
+  // `startsWith("/")` alone would also admit "//evil.com" — browsers treat a
+  // leading "//" as protocol-relative, i.e. an external redirect. Requiring
+  // a single "/" not followed by another "/" keeps this to a real internal path.
+  const isSafeInternalPath = redirectTo.startsWith("/") && !redirectTo.startsWith("//");
+  redirect(isSafeInternalPath ? redirectTo : "/compte/avis");
 }
