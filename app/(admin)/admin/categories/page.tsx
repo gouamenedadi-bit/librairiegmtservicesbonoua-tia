@@ -5,6 +5,7 @@ import { getAdminCategories } from "@/lib/admin/queries";
 import { FORM_BUTTON_PRIMARY } from "@/lib/ui/form-styles";
 import { TABLE_CONTAINER, TABLE_HEAD, TABLE_ROW } from "@/lib/ui/table-styles";
 import { CategoryRowActions } from "@/components/admin/category-row-actions";
+import { CategoryIcon } from "@/lib/catalog/category-icons";
 
 export default async function AdminCategoriesPage() {
   const categories = await getAdminCategories();
@@ -25,7 +26,7 @@ export default async function AdminCategoriesPage() {
       </div>
 
       <div className={TABLE_CONTAINER}>
-        <table className="w-full min-w-[560px] text-left text-sm">
+        <table className="w-full min-w-[620px] text-left text-[15px]">
           <thead className={TABLE_HEAD}>
             <tr>
               <th className="px-5 py-3.5 font-medium">Nom</th>
@@ -43,24 +44,38 @@ export default async function AdminCategoriesPage() {
                 </td>
               </tr>
             ) : (
-              categories.map((category) => (
-                <tr key={category.id} className={`${TABLE_ROW} even:bg-black/[0.015]`}>
-                  <td className="px-5 py-3.5 font-semibold text-brand-navy">{category.name}</td>
-                  <td className="px-5 py-3.5 font-mono text-xs text-black/40">{category.slug}</td>
-                  <td className="px-5 py-3.5">
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-                        category.productCount > 0 ? "bg-brand-green/10 text-brand-green" : "bg-black/5 text-black/35"
-                      }`}
-                    >
-                      {category.productCount}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <CategoryRowActions id={category.id} canDelete={category.productCount === 0} />
-                  </td>
-                </tr>
-              ))
+              categories.map((category) => {
+                const isLibrairie = category.slug.startsWith("librairie-");
+                return (
+                  <tr key={category.id} className={`${TABLE_ROW} even:bg-black/[0.015]`}>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                            isLibrairie ? "bg-brand-green/10 text-brand-green" : "bg-brand-gold/20 text-brand-navy"
+                          }`}
+                        >
+                          <CategoryIcon slug={category.slug} size={18} />
+                        </span>
+                        <span className="font-semibold text-brand-navy">{category.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5 font-mono text-xs text-black/40">{category.slug}</td>
+                    <td className="px-5 py-3.5">
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                          category.productCount > 0 ? "bg-brand-green/10 text-brand-green" : "bg-black/5 text-black/35"
+                        }`}
+                      >
+                        {category.productCount}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <CategoryRowActions id={category.id} canDelete={category.productCount === 0} />
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
