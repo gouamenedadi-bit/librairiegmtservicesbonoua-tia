@@ -51,23 +51,40 @@ export async function submitOrder(
     if (error?.message.includes("invalid_or_unpriced_product")) {
       return { error: "Un article du panier n'est plus disponible ou n'a pas de prix." };
     }
+    if (error?.message.includes("too_many_pending_orders")) {
+      return {
+        error: "Plusieurs commandes non payées existent déjà pour ce numéro. Réessayez dans 45 minutes ou contactez-nous.",
+      };
+    }
+    if (error?.message.includes("invalid_quantity") || error?.message.includes("too_many_items")) {
+      return { error: "Quantité trop importante. Contactez-nous pour une commande en gros." };
+    }
     return { error: "Impossible de créer la commande, veuillez réessayer." };
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
+  const admin = createAdminClient();
 
-  const session = await createCheckoutSession({
-    amountXOF: data.total_amount,
-    orderNumber: data.order_number,
-    successUrl: `${siteUrl}/commande/${data.order_id}/confirmation`,
-    errorUrl: `${siteUrl}/commande/${data.order_id}/echec`,
-  });
+  let session: Awaited<ReturnType<typeof createCheckoutSession>>;
+  try {
+    session = await createCheckoutSession({
+      amountXOF: data.total_amount,
+      orderNumber: data.order_number,
+      successUrl: `${siteUrl}/commande/${data.order_id}/confirmation`,
+      errorUrl: `${siteUrl}/commande/${data.order_id}/echec`,
+    });
+  } catch {
+    // No payment can ever reach this order — release the stock it reserved
+    // right away instead of waiting for the 45-minute expiry (0013 migration).
+    await admin.rpc("cancel_unpaid_order", { p_order_id: data.order_id });
+    return { error: "Le paiement Wave est momentanément indisponible, veuillez réessayer." };
+  }
 
   // RLS intentionally has no anon/authenticated UPDATE policy on `orders`
   // (see 0002_rls_policies.sql), so attaching the Wave session id — a value
   // we just received from Wave's own API, not from the client — requires the
   // service-role client rather than the guest-scoped one used for create_order.
-  await createAdminClient()
+  await admin
     .from("orders")
     .update({ wave_checkout_session_id: session.id })
     .eq("id", data.order_id);

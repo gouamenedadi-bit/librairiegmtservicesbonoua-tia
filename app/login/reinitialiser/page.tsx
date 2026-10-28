@@ -44,8 +44,8 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError(null);
 
-    if (password.length < 6) {
-      setError("Le mot de passe doit contenir au moins 6 caractères.");
+    if (password.length < 12) {
+      setError("Le mot de passe doit contenir au moins 12 caractères.");
       return;
     }
     if (password !== confirm) {

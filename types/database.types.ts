@@ -209,6 +209,12 @@ isOneToOne: false
 "is_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"cancel_unpaid_order":
+{ Args: { "p_order_id": string }; Returns: boolean
+                           },
+"release_expired_orders":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "mark_order_paid":
 { Args: { "p_wave_checkout_session_id": string,"p_wave_transaction_id": string }; Returns: undefined
                            },

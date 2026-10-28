@@ -17,7 +17,7 @@ export async function createAdminAccount(
   const password = String(formData.get("password") ?? "");
 
   if (!fullName || !email) return { error: "Nom et email requis." };
-  if (password.length < 6) return { error: "Le mot de passe doit contenir au moins 6 caractères." };
+  if (password.length < 12) return { error: "Le mot de passe doit contenir au moins 12 caractères." };
 
   const admin = createAdminClient();
   const { data, error } = await admin.auth.admin.createUser({
@@ -51,7 +51,7 @@ export async function changeMyPassword(
   if (!caller) return { error: "Non autorisé." };
 
   const password = String(formData.get("password") ?? "");
-  if (password.length < 6) return { error: "Le mot de passe doit contenir au moins 6 caractères." };
+  if (password.length < 12) return { error: "Le mot de passe doit contenir au moins 12 caractères." };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password });

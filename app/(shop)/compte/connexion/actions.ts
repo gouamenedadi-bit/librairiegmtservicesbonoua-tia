@@ -22,9 +22,18 @@ export async function signInCustomer(
 
   if (error) return { error: "invalid_credentials" };
 
-  // `startsWith("/")` alone would also admit "//evil.com" — browsers treat a
-  // leading "//" as protocol-relative, i.e. an external redirect. Requiring
-  // a single "/" not followed by another "/" keeps this to a real internal path.
-  const isSafeInternalPath = redirectTo.startsWith("/") && !redirectTo.startsWith("//");
-  redirect(isSafeInternalPath ? redirectTo : "/compte/avis");
+  // Prefix checks alone are bypassable: browsers treat "//evil.com" as
+  // protocol-relative and also normalize "/\evil.com" to it. Resolving the
+  // path against a throwaway origin and checking it stayed on that origin
+  // catches every such variant.
+  redirect(isSafeInternalPath(redirectTo) ? redirectTo : "/compte/avis");
+}
+
+function isSafeInternalPath(path: string): boolean {
+  if (!path.startsWith("/") || path.includes("\\")) return false;
+  try {
+    return new URL(path, "http://internal.invalid").origin === "http://internal.invalid";
+  } catch {
+    return false;
+  }
 }
