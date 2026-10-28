@@ -27,7 +27,7 @@ export default async function AdminOrderDetailPage({
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-brand-navy">{order.order_number}</h1>
+          <h1 className="label-plate font-display text-3xl font-extrabold">{order.order_number}</h1>
           <p className="mt-1 text-sm text-black/60">{DATE_FORMATTER.format(new Date(order.created_at))}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -40,7 +40,7 @@ export default async function AdminOrderDetailPage({
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl lg:col-span-2">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-black/40">Articles</h2>
+          <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-brand-navy/50">Articles</h2>
           <div className="mt-3 divide-y divide-black/5">
             {items.map((item) => (
               <div key={item.id} className="flex items-center justify-between py-3 text-sm">
@@ -64,7 +64,7 @@ export default async function AdminOrderDetailPage({
           style={{ animationDelay: "80ms" }}
           className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl"
         >
-          <h2 className="text-sm font-bold uppercase tracking-wide text-black/40">Client</h2>
+          <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-brand-navy/50">Client</h2>
           <dl className="mt-3 space-y-3 text-sm">
             <div>
               <dt className="text-xs text-black/40">Nom</dt>

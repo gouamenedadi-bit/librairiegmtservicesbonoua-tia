@@ -5,7 +5,7 @@ import { Lock, Mail, MapPin, Phone, UserPlus, UserRound } from "lucide-react";
 
 import { useTranslations } from "@/lib/i18n/locale-provider";
 import { FORM_BUTTON_PRIMARY, FORM_ERROR } from "@/lib/ui/form-styles";
-import { FormCard } from "@/components/ui/form-card";
+import { AuthShell } from "@/components/ui/auth-shell";
 import { LabeledField } from "@/components/ui/labeled-field";
 import { signUpCustomer } from "./actions";
 
@@ -29,20 +29,20 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
-          <UserPlus size={26} />
+      <div className="animate-fade-in-up mx-auto max-w-md px-4 py-20 text-center">
+        <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-brand-green text-white">
+          <UserPlus size={36} />
         </span>
-        <p className="mt-4 text-lg font-bold text-brand-navy">{dict.auth.signupTitle}</p>
-        <p className="mt-2 text-sm text-black/60">{dict.auth.success}</p>
+        <p className="mt-6 font-display text-4xl font-extrabold uppercase text-brand-navy">{dict.auth.signupTitle}</p>
+        <p className="mt-3 text-black/60">{dict.auth.success}</p>
       </div>
     );
   }
 
   return (
-    <div className="px-4 py-10">
+    <div className="px-4 py-8 sm:py-14">
       <form action={handleSubmit}>
-        <FormCard icon={UserPlus} title={dict.auth.signupTitle} subtitle={dict.auth.signupSubtitle}>
+        <AuthShell eyebrow={dict.nav.account} headline={dict.home.titleLead} mark={dict.home.titleMark} title={dict.auth.signupTitle} subtitle={dict.auth.signupSubtitle}>
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <LabeledField label={dict.auth.firstName} icon={UserRound} name="firstName" autoComplete="given-name" required />
@@ -90,7 +90,7 @@ export default function SignUpPage() {
           <button type="submit" disabled={isPending} className={`mt-8 w-full ${FORM_BUTTON_PRIMARY}`}>
             {isPending ? dict.auth.submitting : dict.auth.submit}
           </button>
-        </FormCard>
+        </AuthShell>
       </form>
     </div>
   );

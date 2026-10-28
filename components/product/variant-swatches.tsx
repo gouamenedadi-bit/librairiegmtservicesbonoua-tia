@@ -11,8 +11,8 @@ export function VariantSwatches({ variants, dict }: { variants: Variant[]; dict:
   if (variants.length === 0) return null;
 
   return (
-    <div className="mt-6">
-      <p className="text-sm font-semibold text-brand-navy">{dict.product.variantsTitle}</p>
+    <div className="mt-8">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-navy/55">{dict.product.variantsTitle}</p>
       <div className="mt-3 flex gap-3 overflow-x-auto pb-2">
         {variants.map((variant) => {
           const path = primaryImagePath(variant.product_images);

@@ -15,13 +15,13 @@ export async function ReviewList({ reviews }: { reviews: Review[] | null | undef
   );
 
   return (
-    <div className="mt-12 border-t border-black/10 pt-8">
-      <h2 className="text-lg font-bold text-brand-navy">
-        {dict.reviews.title} ({reviews.length})
+    <section className="mt-16 border-t border-black/10 pt-10">
+      <h2 className="font-display text-3xl font-extrabold uppercase text-brand-navy">
+        {dict.reviews.title} <span className="text-brand-navy/40">({reviews.length})</span>
       </h2>
-      <ul className="mt-4 space-y-5">
+      <ul className="mt-6 grid gap-4 md:grid-cols-2">
         {sorted.map((review) => (
-          <li key={review.id} className="rounded-xl border border-black/5 p-4">
+          <li key={review.id} className="rounded-2xl border border-black/[0.07] bg-white p-5">
             <div className="flex">
               {[1, 2, 3, 4, 5].map((n) => (
                 <Star
@@ -38,6 +38,6 @@ export async function ReviewList({ reviews }: { reviews: Review[] | null | undef
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }

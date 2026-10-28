@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
+import { AuthShell } from "@/components/ui/auth-shell";
 import { PasswordInput } from "@/components/ui/password-input";
 import { FORM_BUTTON_PRIMARY, FORM_ERROR, FORM_LABEL } from "@/lib/ui/form-styles";
 
@@ -68,23 +68,25 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-navy px-4">
-      <div className="w-full max-w-sm animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8">
-        <div className="flex flex-col items-center text-center">
-          <Image src="/brand/logo.png" alt="TIA Librairie" width={56} height={56} />
-          <h1 className="mt-3 text-lg font-bold text-brand-navy">Nouveau mot de passe</h1>
-        </div>
+    <div className="flex min-h-screen items-center bg-gradient-to-b from-brand-green/[0.07] to-white px-4 py-10">
+      <AuthShell
+        eyebrow="Espace administration"
+        headline="La librairie qui nourrit"
+        mark="vos idées."
+        title="Nouveau mot de passe"
+        subtitle="Choisissez un mot de passe d'au moins 12 caractères."
+      >
 
         {done ? (
-          <p className="mt-7 rounded-xl bg-brand-green/10 px-4 py-3 text-center text-sm font-medium text-brand-green">
+          <p className="rounded-xl bg-brand-green/10 px-4 py-3 text-center text-sm font-medium text-brand-green">
             Mot de passe changé — redirection…
           </p>
         ) : !ready ? (
-          <p className="mt-7 text-center text-sm text-black/50">
+          <p className="text-sm text-black/50">
             Ouvrez cette page depuis le lien reçu par email pour continuer.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-7 space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="new-password" className={FORM_LABEL}>
                 <Lock size={14} className="text-black/30" />
@@ -123,7 +125,7 @@ export default function ResetPasswordPage() {
             </button>
           </form>
         )}
-      </div>
+      </AuthShell>
     </div>
   );
 }

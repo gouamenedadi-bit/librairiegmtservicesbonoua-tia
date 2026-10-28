@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Minus, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, MessageCircle, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 
 import { useCartStore, type CartLine } from "@/lib/cart/store";
 import { formatXOF } from "@/lib/utils/format-xof";
 import { useTranslations } from "@/lib/i18n/locale-provider";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 import type { Dictionary } from "@/lib/i18n/dictionary";
+import { PageHeading } from "@/components/ui/page-heading";
 
 /**
  * Always French, regardless of the site's current locale — like every other
@@ -46,21 +47,21 @@ function QuantityControls({
   dict: Dictionary;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="inline-flex items-center rounded-full border-2 border-brand-navy/15 bg-white">
       <button
         type="button"
         aria-label={dict.cart.decreaseQty}
         onClick={() => setQuantity(line.productId, line.quantity - 1)}
-        className="rounded-full border border-black/10 p-1.5 hover:bg-black/5"
+        className="rounded-full p-2 text-brand-navy transition hover:bg-brand-navy/5 focus-visible:outline-2 focus-visible:outline-brand-navy"
       >
         <Minus size={14} />
       </button>
-      <span className="w-6 text-center text-sm font-semibold">{line.quantity}</span>
+      <span className="w-7 text-center font-display text-lg font-bold text-brand-navy">{line.quantity}</span>
       <button
         type="button"
         aria-label={dict.cart.increaseQty}
         onClick={() => setQuantity(line.productId, line.quantity + 1)}
-        className="rounded-full border border-black/10 p-1.5 hover:bg-black/5"
+        className="rounded-full p-2 text-brand-navy transition hover:bg-brand-navy/5 focus-visible:outline-2 focus-visible:outline-brand-navy"
       >
         <Plus size={14} />
       </button>
@@ -89,114 +90,149 @@ export default function CartPage() {
 
   if (lines.length === 0) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-10">
-        <div className="rounded-3xl border-[3px] border-brand-navy bg-white p-10 text-center shadow-lg sm:p-16">
-          <h1 className="text-2xl font-bold text-brand-navy">{dict.cart.empty}</h1>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:py-20">
+        <div className="rounded-[1.75rem] border-2 border-dashed border-brand-navy/15 px-6 py-14 text-center sm:px-12">
+          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-navy text-brand-gold">
+            <ShoppingCart size={28} />
+          </span>
+          <h1 className="mt-5 font-display text-4xl font-extrabold uppercase text-brand-navy">{dict.cart.empty}</h1>
           <p className="mt-2 text-black/60">{dict.cart.emptyDesc}</p>
-          <Link
-            href="/"
-            className="mt-6 inline-block rounded-full bg-brand-green px-6 py-3 text-sm font-bold text-white"
-          >
-            {dict.cart.backToShop}
-          </Link>
+          <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/categorie/librairie-litterature"
+              className="rounded-full bg-brand-green px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-green-dark"
+            >
+              {dict.home.ctaLibrairie}
+            </Link>
+            <Link
+              href="/categorie/papeterie-bureau"
+              className="rounded-full border-2 border-brand-navy bg-brand-gold px-6 py-2.5 text-sm font-bold text-brand-navy transition hover:brightness-95"
+            >
+              {dict.home.ctaPapeterie}
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="rounded-3xl border-[3px] border-brand-navy bg-white p-6 shadow-lg sm:p-10">
-        <h1 className="text-2xl font-bold text-brand-navy">{dict.cart.title}</h1>
+  const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
 
-        <ul className="mt-6 divide-y divide-black/5">
+  return (
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:pt-12">
+      <PageHeading eyebrow={`${itemCount} ${dict.cart.items}`} title={dict.cart.title} />
+
+      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
+        <ul className="divide-y divide-black/[0.07] rounded-[1.75rem] border border-black/[0.07] bg-white px-4 sm:px-6">
           {lines.map((line) => (
-            <li key={line.productId} className="flex gap-3 py-4 sm:items-center sm:gap-4">
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-black/5">
+            <li key={line.productId} className="flex gap-4 py-5 sm:items-center">
+              <Link
+                href={`/produit/${line.slug}`}
+                className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-brand-navy/[0.04] sm:h-24 sm:w-24"
+              >
                 {line.imageUrl && (
                   <Image src={line.imageUrl} alt={line.name} fill unoptimized className="object-cover" />
                 )}
-              </div>
+              </Link>
 
               <div className="min-w-0 flex-1">
                 <Link
                   href={`/produit/${line.slug}`}
-                  className="line-clamp-2 text-sm font-semibold text-brand-navy hover:text-brand-green"
+                  className="line-clamp-2 font-semibold text-brand-navy hover:text-brand-green"
                 >
                   {line.name}
                 </Link>
-                <p className="mt-1 text-sm text-black/60">
+                <p className="mt-1 text-sm text-black/55">
                   {line.price !== null ? formatXOF(line.price) : dict.product.priceOnRequest}
                 </p>
 
                 {/* Sous le nom sur mobile, faute de place pour tout aligner sur une ligne */}
-                <div className="mt-2 flex items-center justify-between sm:hidden">
+                <div className="mt-3 flex items-center justify-between sm:hidden">
                   <QuantityControls line={line} setQuantity={setQuantity} dict={dict} />
-                  <button
-                    type="button"
-                    aria-label={dict.cart.remove}
-                    onClick={() => removeLine(line.productId)}
-                    className="rounded-full p-2 text-black/40 hover:bg-red-50 hover:text-red-600"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <RemoveButton onClick={() => removeLine(line.productId)} label={dict.cart.remove} />
                 </div>
               </div>
 
               <div className="hidden sm:block">
                 <QuantityControls line={line} setQuantity={setQuantity} dict={dict} />
               </div>
-              <button
-                type="button"
-                aria-label={dict.cart.remove}
-                onClick={() => removeLine(line.productId)}
-                className="hidden rounded-full p-2 text-black/40 hover:bg-red-50 hover:text-red-600 sm:block"
-              >
-                <Trash2 size={16} />
-              </button>
+              <p className="hidden w-28 text-right font-display text-xl font-bold text-brand-navy sm:block">
+                {line.price !== null ? formatXOF(line.price * line.quantity) : "—"}
+              </p>
+              <div className="hidden sm:block">
+                <RemoveButton onClick={() => removeLine(line.productId)} label={dict.cart.remove} />
+              </div>
             </li>
           ))}
         </ul>
 
-        <div className="mt-8 flex items-center justify-between border-t border-black/10 pt-6">
-          <span className="text-lg font-bold text-brand-navy">{dict.cart.total}</span>
-          <span className="text-lg font-bold text-brand-navy">{formatXOF(total)}</span>
-        </div>
+        {/* Summary as a shop receipt: navy ticket, dashed tear line. */}
+        <aside className="rounded-[1.75rem] bg-brand-navy p-6 text-white shadow-[6px_6px_0_0_var(--color-brand-green)] sm:p-7 lg:sticky lg:top-28">
+          <h2 className="text-xs font-bold uppercase tracking-[0.4em] text-white/60">{dict.cart.summary}</h2>
 
-        {pendingLines.length > 0 && (
-          <p className="mt-2 text-xs text-brand-navy/60">
-            {pendingLines.length} {dict.cart.pendingNote}
-          </p>
-        )}
+          <div className="mt-5 flex items-baseline justify-between gap-4">
+            <span className="font-display text-2xl font-bold uppercase">{dict.cart.total}</span>
+            <span className="font-display text-4xl font-extrabold text-brand-gold">{formatXOF(total)}</span>
+          </div>
 
-        <Link
-          href="/commande"
-          className="mt-6 block w-full rounded-full bg-brand-green py-3 text-center text-sm font-bold text-white transition hover:bg-brand-green-dark"
-        >
-          {dict.cart.checkout}
-        </Link>
+          {pendingLines.length > 0 && (
+            <p className="mt-3 text-xs leading-relaxed text-white/60">
+              {pendingLines.length} {dict.cart.pendingNote}
+            </p>
+          )}
 
-        {whatsappOrderLink && (
-          <>
-            <div className="my-4 flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-black/30">
-              <span className="h-px flex-1 bg-black/10" />
-              {dict.cart.orDivider}
-              <span className="h-px flex-1 bg-black/10" />
-            </div>
+          <div aria-hidden className="my-6 border-t-2 border-dashed border-white/20" />
 
-            <a
-              href={whatsappOrderLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-center text-sm font-bold text-white transition hover:brightness-95"
-            >
-              <MessageCircle size={18} />
-              {dict.cart.whatsappOrder}
-            </a>
-            <p className="mt-2 text-center text-xs text-black/50">{dict.cart.whatsappOrderDesc}</p>
-          </>
-        )}
+          <Link
+            href="/commande"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-green py-3.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+          >
+            {dict.cart.checkout}
+            <ArrowRight size={16} />
+          </Link>
+
+          {whatsappOrderLink && (
+            <>
+              <div className="my-4 flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-white/40">
+                <span className="h-px flex-1 bg-white/15" />
+                {dict.cart.orDivider}
+                <span className="h-px flex-1 bg-white/15" />
+              </div>
+
+              <a
+                href={whatsappOrderLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3 text-center text-sm font-bold text-brand-navy transition hover:bg-brand-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+              >
+                <MessageCircle size={18} className="text-brand-green" />
+                {dict.cart.whatsappOrder}
+              </a>
+              <p className="mt-2 text-center text-xs leading-relaxed text-white/55">{dict.cart.whatsappOrderDesc}</p>
+            </>
+          )}
+
+          <Link
+            href="/"
+            className="mt-6 block text-center text-xs font-semibold text-white/60 underline-offset-2 hover:text-white hover:underline"
+          >
+            {dict.cart.continueShopping}
+          </Link>
+        </aside>
       </div>
     </div>
+  );
+}
+
+function RemoveButton({ onClick, label }: { onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className="rounded-full p-2 text-black/35 transition hover:bg-red-50 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-brand-navy"
+    >
+      <Trash2 size={17} />
+    </button>
   );
 }

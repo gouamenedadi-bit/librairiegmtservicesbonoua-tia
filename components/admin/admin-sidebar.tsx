@@ -23,10 +23,15 @@ export function AdminSidebar() {
   return (
     <>
       {/* Barre mobile/tablette : le menu latéral devient un tiroir en dessous du breakpoint lg */}
-      <div className="sticky top-0 z-30 flex items-center justify-between bg-brand-navy px-4 py-3 text-white lg:hidden">
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b-4 border-brand-green bg-brand-navy px-4 py-3 text-white lg:hidden">
         <Link href="/admin" className="flex items-center gap-2">
-          <Image src="/brand/logo.png" alt="TIA Librairie" width={28} height={28} />
-          <span className="text-xs font-bold uppercase tracking-wide">Administration</span>
+          <span className="rounded-lg bg-white p-1">
+                <Image src="/brand/logo.png" alt="" width={26} height={26} />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-xs font-bold">TIA LIBRAIRIE</span>
+                <span className="block text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">Administration</span>
+              </span>
         </Link>
         <button
           type="button"
@@ -47,15 +52,20 @@ export function AdminSidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col justify-between overflow-y-auto bg-brand-navy px-4 py-6 text-white transition-transform duration-200 lg:static lg:z-auto lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col justify-between overflow-y-auto border-r-4 border-brand-green bg-brand-navy px-4 py-6 text-white transition-transform duration-200 lg:static lg:z-auto lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div>
           <div className="mb-8 flex items-center justify-between px-2">
             <Link href="/admin" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-              <Image src="/brand/logo.png" alt="TIA Librairie" width={32} height={32} />
-              <span className="text-xs font-bold uppercase tracking-wide">Administration</span>
+              <span className="rounded-lg bg-white p-1">
+                <Image src="/brand/logo.png" alt="" width={32} height={32} />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-xs font-bold">TIA LIBRAIRIE</span>
+                <span className="block text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">Administration</span>
+              </span>
             </Link>
             <button
               type="button"
@@ -77,7 +87,7 @@ export function AdminSidebar() {
                   href={link.href}
                   onClick={() => setOpen(false)}
                   aria-current={isActive ? "page" : undefined}
-                  className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:translate-x-1 ${
+                  className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-all duration-200 hover:translate-x-1 ${
                     isActive
                       ? "bg-brand-green text-white"
                       : "text-white/80 hover:bg-white/10 hover:text-white"

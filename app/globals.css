@@ -22,6 +22,7 @@
   --color-brand-gold: var(--color-brand-gold);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-barlow-condensed);
 }
 
 body {
@@ -65,9 +66,67 @@ body {
   animation: fade-in-down 0.18s ease-out both;
 }
 
+/* The yellow "GMT SERVICES BONOUA" plate from the logo — rounded, thin navy
+   outline, green offset shadow — reused to mark the one word a heading
+   hinges on. Sized in `em` so it scales with whatever text it wraps. */
+.label-plate {
+  display: inline-block;
+  padding: 0 0.22em;
+  border: 0.05em solid var(--color-brand-navy);
+  border-radius: 0.28em;
+  background: var(--color-brand-gold);
+  color: var(--color-brand-navy);
+  box-shadow: 0.1em 0.1em 0 var(--color-brand-green);
+}
+
+/* Homepage hero: the logo's open book. Each page swings in from its spine
+   once, on load — the left page hinges on its right edge, the right page
+   on its left edge. On phones the pages are stacked, not side by side, so
+   they simply fade in instead (the 40rem breakpoint is Tailwind's `sm`). */
+@keyframes page-open-left {
+  from {
+    opacity: 0;
+    transform: perspective(1400px) rotateY(28deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1400px) rotateY(0);
+  }
+}
+
+@keyframes page-open-right {
+  from {
+    opacity: 0;
+    transform: perspective(1400px) rotateY(-28deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1400px) rotateY(0);
+  }
+}
+
+.animate-page-left,
+.animate-page-right {
+  animation: fade-in-up 0.5s ease-out 0.15s both;
+}
+
+@media (min-width: 40rem) {
+  .animate-page-left {
+    transform-origin: right center;
+    animation: page-open-left 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+  }
+
+  .animate-page-right {
+    transform-origin: left center;
+    animation: page-open-right 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
-  .animate-fade-in-down {
+  .animate-fade-in-down,
+  .animate-page-left,
+  .animate-page-right {
     animation: none;
   }
 }

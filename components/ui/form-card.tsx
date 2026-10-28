@@ -24,8 +24,8 @@ export function FormCard({
           <Icon size={20} />
         </span>
         <div>
-          <p className="font-bold text-brand-navy">{title}</p>
-          {subtitle && <p className="text-xs text-black/40">{subtitle}</p>}
+          <p className="font-display text-2xl font-bold uppercase leading-none text-brand-navy">{title}</p>
+          {subtitle && <p className="mt-1 text-xs text-black/45">{subtitle}</p>}
         </div>
       </div>
       <div className="mt-7">{children}</div>

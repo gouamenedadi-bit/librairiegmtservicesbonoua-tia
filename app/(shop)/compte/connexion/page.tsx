@@ -3,11 +3,11 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { LogIn, Mail, Lock } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 
 import { useTranslations } from "@/lib/i18n/locale-provider";
 import { FORM_BUTTON_PRIMARY, FORM_ERROR } from "@/lib/ui/form-styles";
-import { FormCard } from "@/components/ui/form-card";
+import { AuthShell } from "@/components/ui/auth-shell";
 import { LabeledField } from "@/components/ui/labeled-field";
 import { signInCustomer } from "./actions";
 
@@ -27,10 +27,10 @@ export default function CustomerLoginPage() {
   }
 
   return (
-    <div className="px-4 py-10">
+    <div className="px-4 py-8 sm:py-14">
       <form action={handleSubmit}>
         <input type="hidden" name="redirectTo" value={redirectTo} />
-        <FormCard icon={LogIn} title={dict.login.title} subtitle={dict.login.subtitle}>
+        <AuthShell eyebrow={dict.nav.account} headline={dict.home.titleLead} mark={dict.home.titleMark} title={dict.login.title} subtitle={dict.login.subtitle}>
           <div className="space-y-5">
             <LabeledField label={dict.login.email} icon={Mail} name="email" type="email" autoComplete="email" required />
             <LabeledField
@@ -55,7 +55,7 @@ export default function CustomerLoginPage() {
               {dict.login.createAccount}
             </Link>
           </p>
-        </FormCard>
+        </AuthShell>
       </form>
     </div>
   );

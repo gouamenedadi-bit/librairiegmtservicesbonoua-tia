@@ -24,7 +24,8 @@ export function SortSelect() {
         params.set("tri", event.target.value);
         router.push(`?${params.toString()}`, { scroll: false });
       }}
-      className="rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-medium text-brand-navy outline-none transition-colors focus:border-brand-green"
+      aria-label={dict.category.sortPrefix.replace(/[\s:]+$/, "")}
+      className="rounded-full border-2 border-brand-navy/15 bg-white px-4 py-2 text-sm font-semibold text-brand-navy outline-none transition-colors hover:border-brand-navy/30 focus:border-brand-navy"
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>

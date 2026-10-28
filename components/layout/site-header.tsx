@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, Phone, Search, User, X } from "lucide-react";
 
 import { CartSummary } from "@/components/cart/cart-summary";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { MegaMenu } from "@/components/layout/mega-menu";
+import { NAV_ACTIVE_GREEN, NAV_IDLE, NAV_LINK } from "@/components/layout/nav-styles";
 import { useTranslations } from "@/lib/i18n/locale-provider";
 import { getWhatsAppDisplayNumber, getWhatsAppLink } from "@/lib/whatsapp";
 
@@ -73,6 +75,7 @@ export function SiteHeader({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const dict = useTranslations();
+  const pathname = usePathname() ?? "/";
 
   const whatsappDisplayNumber = getWhatsAppDisplayNumber();
   const whatsappLink = getWhatsAppLink();
@@ -114,7 +117,7 @@ export function SiteHeader({
               type="search"
               name="q"
               placeholder={dict.search.placeholder}
-              className="w-full rounded-full border border-black/10 bg-black/[0.015] py-2.5 pl-4 pr-11 text-sm outline-none transition-colors focus:border-brand-green focus:bg-white focus:ring-1 focus:ring-brand-green"
+              className="w-full rounded-full border-2 border-brand-navy/10 bg-black/[0.015] py-2.5 pl-4 pr-11 text-sm outline-none transition-colors focus:border-brand-navy focus:bg-white"
             />
             <button
               type="submit"
@@ -173,24 +176,41 @@ export function SiteHeader({
           matter how far the page has scrolled. Centered per user request:
           justify-center instead of the old left-aligned row. */}
       <nav className="relative hidden border-t border-black/5 md:block">
-        <div className="mx-auto flex h-11 max-w-6xl items-center justify-center gap-10 px-4">
+        <div className="mx-auto flex h-12 max-w-6xl items-stretch justify-center gap-10 px-4">
           <Link
             href="/"
-            className="text-base font-semibold text-brand-navy transition-all duration-200 hover:scale-105 hover:text-brand-green"
+            aria-current={pathname === "/" ? "page" : undefined}
+            className={`${NAV_LINK} ${pathname === "/" ? NAV_ACTIVE_GREEN : NAV_IDLE}`}
           >
             {dict.category.breadcrumbHome}
           </Link>
-          <MegaMenu label={dict.nav.librairie} href="/categorie/librairie-litterature" items={librairie} />
-          <MegaMenu label={dict.nav.papeterie} href="/categorie/papeterie-bureau" items={papeterie} />
+          <MegaMenu
+            label={dict.nav.librairie}
+            href="/categorie/librairie-litterature"
+            items={librairie}
+            accent="green"
+            isActive={pathname.startsWith("/categorie/librairie-")}
+            seeAllLabel={dict.nav.seeAll}
+          />
+          <MegaMenu
+            label={dict.nav.papeterie}
+            href="/categorie/papeterie-bureau"
+            items={papeterie}
+            accent="gold"
+            isActive={pathname.startsWith("/categorie/papeterie-")}
+            seeAllLabel={dict.nav.seeAll}
+          />
           <Link
             href="/recherche"
-            className="text-base font-semibold text-brand-navy transition-all duration-200 hover:scale-105 hover:text-brand-green"
+            aria-current={pathname.startsWith("/recherche") ? "page" : undefined}
+            className={`${NAV_LINK} ${pathname.startsWith("/recherche") ? NAV_ACTIVE_GREEN : NAV_IDLE}`}
           >
             {dict.nav.recherche}
           </Link>
           <Link
             href="/compte/avis"
-            className="text-base font-semibold text-brand-navy transition-all duration-200 hover:scale-105 hover:text-brand-green"
+            aria-current={pathname.startsWith("/compte/avis") ? "page" : undefined}
+            className={`${NAV_LINK} ${pathname.startsWith("/compte/avis") ? NAV_ACTIVE_GREEN : NAV_IDLE}`}
           >
             {dict.nav.avis}
           </Link>

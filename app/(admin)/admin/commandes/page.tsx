@@ -15,7 +15,7 @@ export default async function AdminOrdersPage() {
   return (
     <div>
       <div className="sticky top-0 z-10 -mx-4 -mt-4 border-b border-black/5 bg-white px-4 pt-4 pb-5 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6 lg:-mx-8 lg:-mt-8 lg:px-8 lg:pt-8">
-        <h1 className="text-2xl font-bold text-brand-navy">Commandes</h1>
+        <h1 className="font-display text-4xl font-extrabold uppercase leading-none text-brand-navy">Commandes</h1>
         <p className="mt-1 text-sm text-black/60">{orders.length} commande(s) récente(s)</p>
       </div>
 

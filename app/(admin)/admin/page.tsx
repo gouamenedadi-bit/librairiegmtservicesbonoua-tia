@@ -76,14 +76,14 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-brand-navy">Tableau de bord</h1>
-      <p className="mt-1 text-sm capitalize text-black/50">{today}</p>
+      <p className="text-xs font-bold uppercase tracking-[0.4em] text-brand-navy/50">{today}</p>
+      <h1 className="mt-3 font-display text-5xl font-extrabold uppercase leading-none text-brand-navy">Tableau de bord</h1>
 
       {/* Ce qui a besoin d'une action maintenant, distinct de l'état général
           en dessous — un admin qui ouvre cette page veut d'abord savoir ce
           qu'il doit FAIRE aujourd'hui, pas juste voir des compteurs. */}
       <section className="mt-8">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-brand-navy/60">À faire aujourd&apos;hui</h2>
+        <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-brand-navy/55">À faire aujourd&apos;hui</h2>
 
         {todoItems.length === 0 ? (
           <div
@@ -106,7 +106,7 @@ export default async function AdminDashboardPage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-brand-navy">
-                    {item.value} {item.label}
+                    <span className="mr-1 font-display text-2xl font-extrabold">{item.value}</span> {item.label}
                   </p>
                   <p className="truncate text-xs text-black/50">{item.hint}</p>
                 </div>
@@ -122,7 +122,7 @@ export default async function AdminDashboardPage() {
 
       {/* État général de la boutique — calme, neutre, pas une alerte. */}
       <section className="mt-8">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-brand-navy/60">Aperçu de la boutique</h2>
+        <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-brand-navy/55">Aperçu de la boutique</h2>
         <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
           {overviewCards.map((card, index) => (
             <Link
@@ -135,7 +135,7 @@ export default async function AdminDashboardPage() {
                 <card.icon size={18} />
               </span>
               <div>
-                <p className="text-2xl font-extrabold text-brand-navy">{card.value}</p>
+                <p className="font-display text-4xl font-extrabold leading-none text-brand-navy">{card.value}</p>
                 <p className="text-xs font-medium text-black/50">{card.label}</p>
               </div>
             </Link>
@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-brand-navy/60">Accès rapide</h2>
+        <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-brand-navy/55">Accès rapide</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {QUICK_LINKS.map((link) => (
             <Link

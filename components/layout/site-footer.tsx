@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Phone } from "lucide-react";
 
@@ -12,14 +13,30 @@ export async function SiteFooter() {
 
   return (
     <footer className="mt-auto bg-brand-navy text-white">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
+      {/* The logo's three colors as a thin page-edge band. */}
+      <div aria-hidden className="flex h-1.5">
+        <span className="flex-1 bg-brand-green" />
+        <span className="flex-1 bg-brand-gold" />
+      </div>
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide">TIA Librairie</p>
-          <p className="mt-2 text-sm text-white/70">{dict.footer.tagline}</p>
+          <div className="flex items-center gap-3">
+            <span className="rounded-xl bg-white p-1.5">
+              <Image src="/brand/logo.png" alt="" width={40} height={40} />
+            </span>
+            <span className="leading-tight">
+              <span className="block text-sm font-bold">TIA LIBRAIRIE</span>
+              <span className="block text-xs font-semibold text-brand-green">GMT SERVICES BONOUA</span>
+            </span>
+          </div>
+          <p className="mt-5 font-display text-3xl font-extrabold uppercase leading-[0.95]">
+            {dict.home.titleLead} <span className="text-brand-gold">{dict.home.titleMark}</span>
+          </p>
+          <p className="mt-3 max-w-sm text-sm text-white/65">{dict.footer.tagline}</p>
         </div>
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-brand-gold">{dict.footer.boutique}</p>
-          <ul className="mt-2 space-y-1 text-sm text-white/70">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-brand-gold">{dict.footer.boutique}</p>
+          <ul className="mt-4 space-y-2 text-sm text-white/70">
             <li><Link href="/categorie/librairie-litterature" className="hover:text-white">{dict.footer.librairie}</Link></li>
             <li><Link href="/categorie/papeterie-bureau" className="hover:text-white">{dict.footer.papeterie}</Link></li>
             <li><Link href="/panier" className="hover:text-white">{dict.footer.monPanier}</Link></li>
@@ -27,8 +44,8 @@ export async function SiteFooter() {
           </ul>
         </div>
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-brand-gold">{dict.footer.contact}</p>
-          <p className="mt-2 text-sm text-white/70">{dict.footer.address}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-brand-gold">{dict.footer.contact}</p>
+          <p className="mt-4 text-sm text-white/70">{dict.footer.address}</p>
           {whatsappDisplayNumber && whatsappLink && (
             <a
               href={whatsappLink}

@@ -19,7 +19,7 @@ export default async function TeamPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-brand-navy">Équipe</h1>
+      <h1 className="font-display text-4xl font-extrabold uppercase leading-none text-brand-navy">Équipe</h1>
       <p className="mt-1 text-sm text-black/60">Comptes ayant accès à cette administration.</p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">

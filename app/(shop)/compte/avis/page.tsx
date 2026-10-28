@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { ReviewForm } from "@/components/product/review-form";
+import { PageHeading } from "@/components/ui/page-heading";
 
 export default async function MyReviewsPage() {
   const dict = getDictionary(await getLocale());
@@ -26,18 +27,19 @@ export default async function MyReviewsPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-brand-navy">{dict.reviews.pageTitle}</h1>
-      <p className="mt-2 text-sm text-black/60">{dict.reviews.pageSubtitle}</p>
+    <div className="mx-auto max-w-3xl px-4 pb-16 pt-8 sm:pt-12">
+      <PageHeading eyebrow={dict.nav.account} title={dict.reviews.pageTitle} subtitle={dict.reviews.pageSubtitle} />
 
-      <section className="mt-8">
-        <h2 className="text-lg font-bold text-brand-navy">{dict.reviews.toReviewTitle}</h2>
+      <section className="mt-10">
+        <h2 className="font-display text-2xl font-bold uppercase text-brand-navy">{dict.reviews.toReviewTitle}</h2>
         {!reviewable || reviewable.length === 0 ? (
-          <p className="mt-3 text-sm text-black/50">{dict.reviews.toReviewEmpty}</p>
+          <p className="mt-4 rounded-[1.5rem] border-2 border-dashed border-black/10 px-6 py-10 text-center text-sm text-black/55">
+            {dict.reviews.toReviewEmpty}
+          </p>
         ) : (
           <ul className="mt-4 space-y-4">
             {reviewable.map((item) => (
-              <li key={item.order_item_id} className="rounded-2xl border border-black/5 p-4">
+              <li key={item.order_item_id} className="rounded-[1.5rem] border border-black/[0.07] bg-white p-5">
                 <ReviewForm
                   orderItemId={item.order_item_id}
                   productId={item.product_id}
@@ -51,11 +53,11 @@ export default async function MyReviewsPage() {
       </section>
 
       {myReviews && myReviews.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-brand-navy">{dict.reviews.myReviewsTitle}</h2>
+        <section className="mt-12">
+          <h2 className="font-display text-2xl font-bold uppercase text-brand-navy">{dict.reviews.myReviewsTitle}</h2>
           <ul className="mt-4 space-y-3">
             {myReviews.map((review) => (
-              <li key={review.id} className="rounded-2xl border border-black/5 p-4">
+              <li key={review.id} className="rounded-[1.5rem] border border-black/[0.07] bg-white p-5">
                 <p className="text-sm font-semibold text-brand-navy">{review.products?.name}</p>
                 <div className="mt-1 flex">
                   {[1, 2, 3, 4, 5].map((n) => (

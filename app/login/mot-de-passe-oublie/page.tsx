@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { ChevronLeft, Mail } from "lucide-react";
 
+import { AuthShell } from "@/components/ui/auth-shell";
 import { FORM_BUTTON_PRIMARY, FORM_ERROR, FORM_INPUT, FORM_LABEL } from "@/lib/ui/form-styles";
 import { requestPasswordReset } from "./actions";
 
@@ -23,22 +23,21 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-navy px-4">
-      <div className="w-full max-w-sm animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8">
-        <div className="flex flex-col items-center text-center">
-          <Image src="/brand/logo.png" alt="TIA Librairie" width={56} height={56} />
-          <h1 className="mt-3 text-lg font-bold text-brand-navy">Mot de passe oublié</h1>
-          <p className="mt-1 text-xs text-black/40">
-            Entrez votre email, on vous envoie un lien pour en choisir un nouveau.
-          </p>
-        </div>
+    <div className="flex min-h-screen items-center bg-gradient-to-b from-brand-green/[0.07] to-white px-4 py-10">
+      <AuthShell
+        eyebrow="Espace administration"
+        headline="La librairie qui nourrit"
+        mark="vos idées."
+        title="Mot de passe oublié"
+        subtitle="Entrez votre email, on vous envoie un lien pour en choisir un nouveau."
+      >
 
         {sent ? (
-          <p className="mt-7 rounded-xl bg-brand-green/10 px-4 py-3 text-center text-sm font-medium text-brand-green">
+          <p className="rounded-xl bg-brand-green/10 px-4 py-3 text-center text-sm font-medium text-brand-green">
             Si cet email correspond à un compte, un lien de réinitialisation vient d&apos;être envoyé.
           </p>
         ) : (
-          <form action={handleSubmit} className="mt-7 space-y-5">
+          <form action={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="reset-email" className={FORM_LABEL}>
                 <Mail size={14} className="text-black/30" />
@@ -69,7 +68,7 @@ export default function ForgotPasswordPage() {
           <ChevronLeft size={14} />
           Retour à la connexion
         </Link>
-      </div>
+      </AuthShell>
     </div>
   );
 }

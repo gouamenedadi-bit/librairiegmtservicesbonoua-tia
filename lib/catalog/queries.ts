@@ -73,7 +73,9 @@ export async function getProductBySlug(slug: string) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("products")
-    .select("*, product_images(storage_path, position, is_primary), product_reviews(id, rating, comment, created_at)")
+    .select(
+      "*, categories(slug, name), product_images(storage_path, position, is_primary), product_reviews(id, rating, comment, created_at)",
+    )
     .eq("slug", slug)
     .eq("is_active", true)
     .maybeSingle();

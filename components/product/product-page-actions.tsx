@@ -36,31 +36,34 @@ export function ProductPageActions({
 
   return (
     <div>
-      <div className="flex items-center gap-2">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-navy/50">{dict.product.quantity}</p>
+      <div className="mt-2 inline-flex items-center rounded-full border-2 border-brand-navy/15 bg-white">
         <button
           type="button"
-          aria-label="-"
+          aria-label={dict.cart.decreaseQty}
           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-          className="rounded-full border border-black/10 p-2.5 hover:bg-black/5"
+          className="rounded-full p-3 text-brand-navy transition hover:bg-brand-navy/5 focus-visible:outline-2 focus-visible:outline-brand-navy"
         >
-          <Minus size={14} />
+          <Minus size={16} />
         </button>
-        <span className="w-8 text-center text-sm font-bold text-brand-navy">{quantity}</span>
+        <span aria-live="polite" className="w-10 text-center font-display text-xl font-bold text-brand-navy">
+          {quantity}
+        </span>
         <button
           type="button"
-          aria-label="+"
-          onClick={() => setQuantity((q) => q + 1)}
-          className="rounded-full border border-black/10 p-2.5 hover:bg-black/5"
+          aria-label={dict.cart.increaseQty}
+          onClick={() => setQuantity((q) => Math.min(100, q + 1))}
+          className="rounded-full p-3 text-brand-navy transition hover:bg-brand-navy/5 focus-visible:outline-2 focus-visible:outline-brand-navy"
         >
-          <Plus size={14} />
+          <Plus size={16} />
         </button>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
         <button
           type="button"
           onClick={handleAddToCart}
-          className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-green px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-green-dark"
+          className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-green px-6 py-3.5 text-sm font-bold text-white transition hover:bg-brand-green-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
         >
           <ShoppingCart size={16} />
           {dict.product.addToCart}
@@ -70,7 +73,7 @@ export function ProductPageActions({
           <button
             type="button"
             onClick={handleBuyNow}
-            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-gold px-6 py-3 text-sm font-bold text-brand-navy transition hover:brightness-95"
+            className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-brand-navy bg-brand-gold px-6 py-3 text-sm font-bold text-brand-navy shadow-[3px_3px_0_0_var(--color-brand-green)] transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
           >
             <Zap size={16} />
             {dict.product.buyNow}

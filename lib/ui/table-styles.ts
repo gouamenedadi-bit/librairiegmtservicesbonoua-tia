@@ -8,7 +8,7 @@
 export const TABLE_CONTAINER =
   "mt-6 animate-fade-in-up overflow-x-auto rounded-3xl border border-black/5 bg-white shadow-xl";
 
-export const TABLE_HEAD = "border-b border-black/5 bg-black/[0.02] text-xs uppercase tracking-wide text-black/40";
+export const TABLE_HEAD = "border-b border-black/5 bg-black/[0.02] text-xs font-bold uppercase tracking-[0.15em] text-brand-navy/50";
 
 export const TABLE_ROW = "transition-colors duration-150 hover:bg-brand-green/[0.04]";
 
