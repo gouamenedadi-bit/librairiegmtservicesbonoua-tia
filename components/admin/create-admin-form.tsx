@@ -24,7 +24,7 @@ export function CreateAdminForm() {
   }
 
   return (
-    <FormCard icon={UserPlus} title="Ajouter un administrateur" subtitle="Donne accès à cette administration.">
+    <FormCard icon={UserPlus} title="Ajouter un administrateur" subtitle="Donne accès à cette administration." maxWidth="max-w-none">
       <form action={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="new-admin-name" className={FORM_LABEL}>

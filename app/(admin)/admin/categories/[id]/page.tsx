@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 
 import { getCategoryForEdit } from "@/lib/admin/queries";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { CategoryForm } from "@/components/admin/category-form";
 import { updateCategory } from "../actions";
 
@@ -15,12 +14,13 @@ export default async function EditCategoryPage({
   if (!category) notFound();
 
   return (
-    <div>
-      <Link href="/admin/categories" className="flex items-center gap-1 text-sm text-black/50 hover:text-brand-navy">
-        <ChevronLeft size={16} />
-        Retour aux catégories
-      </Link>
-      <div className="mt-4">
+    <div className="mx-auto max-w-2xl">
+      <AdminPageHeader
+        back={{ href: "/admin/categories", label: "Retour aux catégories" }}
+        title="Modifier la catégorie"
+        description={category.name}
+      />
+      <div className="mt-6">
         <CategoryForm category={category} action={updateCategory.bind(null, id)} />
       </div>
     </div>

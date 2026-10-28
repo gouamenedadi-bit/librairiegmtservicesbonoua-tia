@@ -1,17 +1,12 @@
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { CategoryForm } from "@/components/admin/category-form";
 import { createCategory } from "../actions";
 
 export default function NewCategoryPage() {
   return (
-    <div>
-      <Link href="/admin/categories" className="flex items-center gap-1 text-sm text-black/50 hover:text-brand-navy">
-        <ChevronLeft size={16} />
-        Retour aux catégories
-      </Link>
-      <div className="mt-4">
+    <div className="mx-auto max-w-2xl">
+      <AdminPageHeader back={{ href: "/admin/categories", label: "Retour aux catégories" }} title="Nouvelle catégorie" />
+      <div className="mt-6">
         <CategoryForm action={createCategory} />
       </div>
     </div>

@@ -54,8 +54,9 @@ export function CategoryForm({
     <form action={handleSubmit}>
       <FormCard
         icon={FolderPlus}
-        title={category ? "Modifier la catégorie" : "Nouvelle catégorie"}
+        title="Informations de la catégorie"
         subtitle="Visible immédiatement sur le site une fois enregistrée."
+        maxWidth="max-w-none"
       >
         <div className="space-y-6">
           <div>

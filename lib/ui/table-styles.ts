@@ -1,15 +1,18 @@
-// Shared Tailwind class strings for every admin list/table page (categories,
-// products, orders) — the table equivalent of lib/ui/form-styles.ts.
+// Shared Tailwind class strings for the admin (cards, list tables) — the
+// admin equivalent of lib/ui/form-styles.ts.
+//
+// Calm by design: white cards on a pale navy-tinted page, thin navy borders
+// and a soft two-layer shadow. Still lifted off the page (the user asked for
+// visible depth on admin cards), just quieter than the old shadow-xl.
 
-// shadow-xl (not shadow-sm) is deliberate — a real drop shadow gives these
-// cards/tables a "lifted off the page" depth, not animation (the user
-// explicitly asked for shadows, not motion). Applied consistently across
-// every admin page via this one shared constant.
-export const TABLE_CONTAINER =
-  "mt-6 animate-fade-in-up overflow-x-auto rounded-3xl border border-black/5 bg-white shadow-xl";
+export const ADMIN_CARD =
+  "rounded-2xl border border-brand-navy/[0.08] bg-white shadow-[0_1px_2px_rgba(24,43,92,0.05),0_12px_32px_-18px_rgba(24,43,92,0.22)]";
 
-export const TABLE_HEAD = "border-b border-black/5 bg-black/[0.02] text-xs font-bold uppercase tracking-[0.15em] text-brand-navy/50";
+export const TABLE_CONTAINER = `mt-6 animate-fade-in-up overflow-x-auto ${ADMIN_CARD}`;
 
-export const TABLE_ROW = "transition-colors duration-150 hover:bg-brand-green/[0.04]";
+export const TABLE_HEAD =
+  "border-b border-brand-navy/[0.08] bg-brand-navy/[0.025] text-xs font-semibold uppercase tracking-wide text-brand-navy/50";
 
-export const ICON_BUTTON = "rounded-full p-2 transition-all duration-200 hover:scale-110";
+export const TABLE_ROW = "transition-colors duration-150 hover:bg-brand-navy/[0.025]";
+
+export const ICON_BUTTON = "rounded-full p-2 transition-colors duration-200";

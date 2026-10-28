@@ -30,7 +30,7 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <FormCard icon={KeyRound} title="Mon mot de passe" subtitle="Change le mot de passe de votre propre compte.">
+    <FormCard icon={KeyRound} title="Mon mot de passe" subtitle="Change le mot de passe de votre propre compte." maxWidth="max-w-none">
       <form action={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="my-new-password" className={FORM_LABEL}>

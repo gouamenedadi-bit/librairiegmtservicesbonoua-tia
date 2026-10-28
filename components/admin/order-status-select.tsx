@@ -19,7 +19,8 @@ export function OrderStatusSelect({ orderId, status }: { orderId: string; status
           await updateFulfillmentStatus(orderId, status);
         });
       }}
-      className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-xs font-semibold text-brand-navy outline-none transition-colors focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 disabled:opacity-60"
+      aria-label="Statut de la commande"
+      className="rounded-lg border border-brand-navy/15 bg-white px-3 py-1.5 text-xs font-semibold text-brand-navy outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 disabled:opacity-60"
     >
       {(Object.entries(FULFILLMENT_LABELS) as [FulfillmentStatus, string][]).map(([value, label]) => (
         <option key={value} value={value}>

@@ -1,7 +1,10 @@
 import type { LucideIcon } from "lucide-react";
 
-/** Shared centered white card every form in the app renders inside — see
- * lib/ui/form-styles.ts for the matching input/label/button classes. */
+import { ADMIN_CARD } from "@/lib/ui/table-styles";
+
+/** Shared white card every admin form renders inside — see
+ * lib/ui/form-styles.ts for the matching input/label/button classes.
+ * (Storefront sign-in/sign-up use components/ui/auth-shell.tsx instead.) */
 export function FormCard({
   icon: Icon,
   title,
@@ -16,19 +19,17 @@ export function FormCard({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={`mx-auto w-full ${maxWidth} animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8`}
-    >
-      <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
-          <Icon size={20} />
+    <div className={`mx-auto w-full ${maxWidth} animate-fade-in-up p-5 sm:p-7 ${ADMIN_CARD}`}>
+      <div className="flex items-center gap-3 border-b border-brand-navy/[0.08] pb-5">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-navy/[0.06] text-brand-navy">
+          <Icon size={19} />
         </span>
-        <div>
-          <p className="font-display text-2xl font-bold uppercase leading-none text-brand-navy">{title}</p>
-          {subtitle && <p className="mt-1 text-xs text-black/45">{subtitle}</p>}
+        <div className="min-w-0">
+          <p className="text-base font-semibold text-brand-navy">{title}</p>
+          {subtitle && <p className="mt-0.5 text-sm text-brand-navy/50">{subtitle}</p>}
         </div>
       </div>
-      <div className="mt-7">{children}</div>
+      <div className="mt-6">{children}</div>
     </div>
   );
 }

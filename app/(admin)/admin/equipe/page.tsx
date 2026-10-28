@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { FormCard } from "@/components/ui/form-card";
 import { CreateAdminForm } from "@/components/admin/create-admin-form";
 import { ChangePasswordForm } from "@/components/admin/change-password-form";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 
 function initials(name: string | null, email: string | null) {
   const source = name?.trim() || email || "?";
@@ -19,11 +20,10 @@ export default async function TeamPage() {
 
   return (
     <div>
-      <h1 className="font-display text-4xl font-extrabold uppercase leading-none text-brand-navy">Équipe</h1>
-      <p className="mt-1 text-sm text-black/60">Comptes ayant accès à cette administration.</p>
+      <AdminPageHeader title="Équipe" description="Comptes ayant accès à cette administration." />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
-        <FormCard icon={Users} title="Comptes administrateurs" subtitle={`${admins.length} compte(s)`}>
+        <FormCard icon={Users} title="Comptes administrateurs" subtitle={`${admins.length} compte(s)`} maxWidth="max-w-none">
           <ul className="divide-y divide-black/5">
             {admins.map((admin) => (
               <li key={admin.id} className="flex items-center gap-3 py-3">

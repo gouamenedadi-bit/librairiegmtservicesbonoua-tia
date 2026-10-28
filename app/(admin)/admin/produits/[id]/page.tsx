@@ -1,12 +1,42 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Images, Palette } from "lucide-react";
+import { Images, Palette } from "lucide-react";
 
 import { getCategoriesForSelect, getProductForEdit, getProductVariantSiblings } from "@/lib/admin/queries";
+import { ADMIN_CARD } from "@/lib/ui/table-styles";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { ProductForm } from "@/components/admin/product-form";
 import { ImageManager } from "@/components/admin/image-manager";
 import { VariantLinker } from "@/components/admin/variant-linker";
 import { updateProduct } from "../actions";
+
+function SectionCard({
+  icon: Icon,
+  title,
+  subtitle,
+  className = "",
+  children,
+}: {
+  icon: typeof Images;
+  title: string;
+  subtitle: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className={`animate-fade-in-up p-5 sm:p-7 ${ADMIN_CARD} ${className}`}>
+      <div className="flex items-center gap-3 border-b border-brand-navy/[0.08] pb-5">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-navy/[0.06] text-brand-navy">
+          <Icon size={19} />
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-base font-semibold text-brand-navy">{title}</h2>
+          <p className="mt-0.5 text-sm text-brand-navy/50">{subtitle}</p>
+        </div>
+      </div>
+      <div className="mt-6">{children}</div>
+    </section>
+  );
+}
 
 export default async function EditProductPage({
   params,
@@ -24,45 +54,27 @@ export default async function EditProductPage({
 
   return (
     <div>
-      <Link href="/admin/produits" className="flex items-center gap-1 text-sm text-black/50 hover:text-brand-navy">
-        <ChevronLeft size={16} />
-        Retour aux produits
-      </Link>
+      <AdminPageHeader
+        back={{ href: "/admin/produits", label: "Retour aux produits" }}
+        title="Modifier le produit"
+        description={product.name}
+      />
 
-      <div className="mt-4 grid gap-8 lg:grid-cols-2 lg:items-start">
+      <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
         <ProductForm categories={categories} product={product} action={updateProduct.bind(null, id)} />
 
-        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
-              <Images size={20} />
-            </span>
-            <div>
-              <p className="font-bold text-brand-navy">Photos</p>
-              <p className="text-xs text-black/40">La première ajoutée devient l&apos;image principale.</p>
-            </div>
-          </div>
-          <div className="mt-7">
-            <ImageManager productId={id} images={product.product_images ?? []} />
-          </div>
-        </div>
+        <SectionCard icon={Images} title="Photos" subtitle="La première ajoutée devient l'image principale.">
+          <ImageManager productId={id} images={product.product_images ?? []} />
+        </SectionCard>
 
-        <div className="animate-fade-in-up rounded-3xl border border-black/5 bg-white p-6 shadow-xl sm:p-8 lg:col-span-2">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-gold/20 text-brand-navy">
-              <Palette size={20} />
-            </span>
-            <div>
-              <p className="font-bold text-brand-navy">Variantes de couleur</p>
-              <p className="text-xs text-black/40">
-                Lie ce produit à d&apos;autres déjà dans le catalogue (même article, couleur différente).
-              </p>
-            </div>
-          </div>
-          <div className="mt-7">
-            <VariantLinker productId={id} variants={variants} />
-          </div>
-        </div>
+        <SectionCard
+          icon={Palette}
+          title="Variantes de couleur"
+          subtitle="Lie ce produit à d'autres déjà dans le catalogue (même article, couleur différente)."
+          className="lg:col-span-2"
+        >
+          <VariantLinker productId={id} variants={variants} />
+        </SectionCard>
       </div>
     </div>
   );

@@ -34,8 +34,11 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           container, and this one never actually scrolls itself (the
           document does). Learned by watching a sticky filter bar on
           /admin/produits fail to stick until this was traced back here. */}
-      <main className="min-w-0 flex-1 bg-black/[0.02] p-4 sm:p-6 lg:p-8">
-        <ToastProvider>{children}</ToastProvider>
+      <main className="min-w-0 flex-1 bg-[#f5f7fb] p-4 sm:p-6 lg:p-8">
+        {/* Caps line length on wide screens so cards and tables don't stretch edge to edge. */}
+        <div className="mx-auto max-w-7xl">
+          <ToastProvider>{children}</ToastProvider>
+        </div>
       </main>
     </div>
   );

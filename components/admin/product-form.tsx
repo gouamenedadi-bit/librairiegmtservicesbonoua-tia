@@ -66,9 +66,9 @@ export function ProductForm({
     <form action={handleSubmit}>
       <FormCard
         icon={Package}
-        title={product ? "Modifier le produit" : "Nouveau produit"}
-        subtitle="Nom, description, catégorie, prix et photos."
-        maxWidth="max-w-2xl"
+        title="Informations du produit"
+        subtitle="Nom, description, catégorie et prix."
+        maxWidth="max-w-none"
       >
         <div className="space-y-6">
           <div>
